@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      initContainers:
+        - name: wait-for-kafka
+          image: busybox:1.35.0-uclibc
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until nc -z -v -w30 kafka 9092; do
+                echo "Waiting for Kafka to be ready..."
+                sleep 5
+              done
+              echo "Kafka is ready!"
+      containers:
+      - name: producer
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        env:
+        - name: FINNHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: "producer-api-key"
+              key: API_KEY
+

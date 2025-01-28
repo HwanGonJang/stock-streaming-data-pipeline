@@ -1,0 +1,21 @@
+replicaCount: 1
+
+image:
+  repository: confluentinc/cp-kafka
+  tag: "6.2.0"
+  pullPolicy: IfNotPresent
+
+kafka:
+  brokerId: 1
+  zookeeperConnect: "zookeeper:2181"
+  containerPort: 9092
+  advertisedListeners: "PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:29092"
+  listenerSecurityProtocolMap: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+  offsetsTopicReplicationsFactor: 1
+  topicAutoCreate: false
+  transactionStateLog:
+    minISR: 1
+    replicationFactor: 3
+
+persistence:
+  mountPath: /var/lib/kafka/data

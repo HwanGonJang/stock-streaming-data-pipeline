@@ -1,0 +1,22 @@
+cassandra:
+  image:
+    repository: "bitnami/cassandra"
+    tag: "latest"
+  replicas: 2
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 1
+      storage: 8Gi
+    limits:
+      memory: 1Gi
+      cpu: 1
+  volume:
+    name: "cassandra-data"
+    mountPath: "/var/lib/cassandra"
+  accessMode: "ReadWriteOnce"
+  env:
+    CASSANDRA_SEEDS: "cassandra-0.cassandra.default.svc.cluster.local"
+    CASSANDRA_CLUSTER_NAME: "trade_cluster"
+    MAX_HEAP_SIZE: 256M
+    HEAP_NEWSIZE: 100M

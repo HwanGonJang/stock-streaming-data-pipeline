@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+spec:
+  serviceName: "cassandra"
+  replicas: {{ .Values.cassandra.replicas }}
+  selector:
+    matchLabels:
+      app: cassandra
+  template:
+    metadata:
+      labels:
+        app: cassandra
+    spec:
+      containers:
+        - name: cassandra
+          image: "{{ .Values.cassandra.image.repository }}:{{ .Values.cassandra.image.tag }}"
+          ports:
+            - containerPort: 9042
+            - containerPort: 7000
+            - containerPort: 7001
+          env:
+            - name: CASSANDRA_SEEDS
+              value: {{ .Values.cassandra.env.CASSANDRA_SEEDS }}
+            - name: CASSANDRA_CLUSTER_NAME
+              value: {{ .Values.cassandra.env.CASSANDRA_CLUSTER_NAME }}
+            - name: MAX_HEAP_SIZE
+              value: {{ .Values.cassandra.env.MAX_HEAP_SIZE }}
+            - name: HEAP_NEWSIZE
+              value: {{ .Values.cassandra.env.HEAP_NEWSIZE }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              memory: {{ .Values.cassandra.resources.requests.memory }}
+              cpu: {{ .Values.cassandra.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.cassandra.resources.limits.memory }}
+              cpu: {{ .Values.cassandra.resources.limits.cpu }}
+  #         volumeMounts: # for configuring data saving path
+  #           - name: {{ .Values.cassandra.volume.name }}
+  #             mountPath: {{ .Values.cassandra.volume.mountPath }}
+  # volumeClaimTemplates: # for creating persistent unique volume per pods
+  #   - metadata:
+  #       name: {{ .Values.cassandra.volume.name }}
+  #     spec:
+  #       accessModes: [ {{ .Values.cassandra.accessMode }} ]
+  #       resources:
+  #         requests:
+  #           storage: {{ .Values.cassandra.resources.requests.storage }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+spec:
+  selector:
+    app: cassandra
+  ports:
+    - name: cqlsh
+      protocol: TCP
+      port: 9042
+      targetPort: 9042
+    - name: gossip
+      protocol: TCP
+      port: 7000
+      targetPort: 7000
+  clusterIP: None
+

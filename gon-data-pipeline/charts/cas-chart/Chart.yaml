@@ -1,0 +1,8 @@
+apiVersion: v2
+name: cas-chart
+description: A Cassandra Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "3.11.17"
+#TODO: clustering for using multiple cassandra nodes..
+# spark depends on cassandra.

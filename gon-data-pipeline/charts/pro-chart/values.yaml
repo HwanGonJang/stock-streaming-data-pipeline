@@ -1,0 +1,20 @@
+image:
+  repository: shakajan/producer
+  tag: "0.1.2"
+  pullPolicy: Always
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+restartPolicy: Always
