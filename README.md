@@ -1,0 +1,2 @@
+# Stock Streaming Data Pipline Project
+The project is a streaming data pipeline based on Finnhub.io API/websocket real-time trading data. It is designed with a purpose to showcase key aspects of streaming pipeline development & architecture, providing low latency, scalability & availability.
