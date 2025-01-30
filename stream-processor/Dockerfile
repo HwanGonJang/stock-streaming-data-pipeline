@@ -12,7 +12,8 @@ ADD project /sbt/project/
 WORKDIR /sbt
 RUN sbt assembly
 
-FROM gcr.io/spark-operator/spark:v3.0.0
+# FROM apache/spark:v3.1.3
+FROM spark:3.5.1
 
 WORKDIR /opt/spark/jars
 COPY --from=maven_builder maven/target/dependency/ .
