@@ -1,4 +1,4 @@
 .vscode
 
-./finnhub-producer/.venv/
-./finnhub-producer/.env
+finnhub-producer/.venv/
+finnhub-producer/.env
