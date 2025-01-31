@@ -37,7 +37,7 @@
       },
       "id": 8,
       "panels": [],
-      "title": "Bitcoin (BINANCE:BTCUSDT)",
+      "title": "Apple (AAPL)",
       "type": "row"
     },
     {
@@ -132,7 +132,7 @@
         }
       ],
       "timeFrom": "5m",
-      "title": "Price BTC",
+      "title": "Price AAPL",
       "type": "timeseries"
     },
     {
@@ -298,7 +298,7 @@
         }
       ],
       "timeFrom": "5m",
-      "title": "Volume BTC",
+      "title": "Volume AAPL",
       "type": "timeseries"
     }
   ],
@@ -319,7 +319,7 @@
     ]
   },
   "timezone": "",
-  "title": "Finnhub sample BTC dashboard",
+  "title": "Finnhub sample AAPL dashboard",
   "uid": "oaK8xaOVz",
   "version": 1,
   "weekStart": ""

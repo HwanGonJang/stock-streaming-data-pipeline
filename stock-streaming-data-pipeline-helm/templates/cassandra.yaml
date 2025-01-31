@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: cassandra
+spec:
+  serviceName: cassandra
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: cassandra
+  template:
+    metadata:
+      labels:
+        k8s.network/pipeline-network: "true"
+        k8s.service: cassandra
+    spec:
+      containers:
+        - name: cassandra
+          image: finnhub-streaming-data-pipeline-cassandra:latest
+          ports:
+            - containerPort: 9042
+          env:
+            - name: CASSANDRA_CLUSTER_NAME
+              value: "CassandraCluster"
+            - name: CASSANDRA_DATACENTER
+              value: "DataCenter1"
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: "GossipingPropertyFileSnitch"
+            - name: CASSANDRA_HOST
+              value: "cassandra"
+            - name: CASSANDRA_NUM_TOKENS
+              value: "128"
+            - name: CASSANDRA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pipeline-secrets
+                  key: CASSANDRA_PASSWORD
+            - name: CASSANDRA_RACK
+              value: "Rack1"
+            - name: CASSANDRA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pipeline-secrets
+                  key: CASSANDRA_USER
+            - name: HEAP_NEWSIZE
+              value: "128M"
+            - name: MAX_HEAP_SIZE
+              value: "256M"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: cassandra-db-volume
+              mountPath: /var/lib/cassandra
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -f /cassandra-setup.cql"]
+          readinessProbe:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - "nc -zv localhost 9042 || exit 1"
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - "nc -zv localhost 9042 || exit 1"
+            initialDelaySeconds: 30
+            periodSeconds: 20
+      hostname: cassandra
+  volumeClaimTemplates:
+    - metadata:
+        name: cassandra-db-volume
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+        storageClassName: hostpath
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: cassandra
+spec:
+  ports:
+    - name: "9042"
+      port: 9042
+      targetPort: 9042
+  selector:
+    k8s.service: cassandra
+  clusterIP: None

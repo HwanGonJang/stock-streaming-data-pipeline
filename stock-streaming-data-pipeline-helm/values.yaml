@@ -1,0 +1,13 @@
+deploymentInfo:
+  replicaCount: 2
+  namespace: my-chart
+  name: my-nginx-deployment
+  port: 80
+image:
+  name: nginx
+  tag: latest
+  pullPolicy: Always
+serviceInfo:
+  name: my-nginx-service
+  type: NodePort
+  targetPort: 80

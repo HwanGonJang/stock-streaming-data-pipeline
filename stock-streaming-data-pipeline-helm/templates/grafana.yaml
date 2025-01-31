@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: grafana
+  template:
+    metadata:
+      labels:
+        k8s.network/pipeline-network: "true"
+        k8s.service: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/grafana:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH
+              value: "/var/lib/grafana/dashboards/dashboard.json"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: grafana
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  selector:
+    k8s.service: grafana
+  clusterIP: None
