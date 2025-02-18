@@ -1,29 +1,35 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: cassandra-db-volume
+  name: cassandra-db-volume-0
+  labels:
+    type: local
+    app: cassandra-db
 spec:
   capacity:
     storage: 50Gi
   accessModes:
-    - ReadWriteMany
-  storageClassName: hostpath
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
   hostPath:
-    path: /var/lib/minikube/pv0001/
+    path: /data/cassandra-db-volume-0
     type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: kafka-volume
+  name: kafka-volume-0
+  labels:
+    type: local
+    app: kafka
 spec:
   capacity:
     storage: 10Gi
   accessModes:
-    - ReadWriteMany
-  storageClassName: hostpath
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
   hostPath:
-    path: /var/lib/minikube/pv0002/
+    path: /data/kafka-volume-0
     type: DirectoryOrCreate

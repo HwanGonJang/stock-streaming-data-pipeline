@@ -17,9 +17,12 @@ spec:
         k8s.network/pipeline-network: "true"
         k8s.service: cassandra
     spec:
+      securityContext:
+        runAsUser: 0  
+        fsGroup: 0
       containers:
         - name: cassandra
-          image: finnhub-streaming-data-pipeline-cassandra:latest
+          image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/cassandra:latest
           ports:
             - containerPort: 9042
           env:
@@ -59,23 +62,21 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -f /cassandra-setup.cql"]
+                command: ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && chmod +x /cassandra-setup.cql && cqlsh localhost -f /cassandra-setup.cql"]
           readinessProbe:
-            exec:
-              command:
-                - "/bin/sh"
-                - "-c"
-                - "nc -zv localhost 9042 || exit 1"
+            tcpSocket:
+              port: 9042
             initialDelaySeconds: 15
             periodSeconds: 10
           livenessProbe:
-            exec:
-              command:
-                - "/bin/sh"
-                - "-c"
-                - "nc -zv localhost 9042 || exit 1"
+            tcpSocket:
+              port: 9042
             initialDelaySeconds: 30
             periodSeconds: 20
+      volumes:
+        - name: cassandra-db-volume
+          persistentVolumeClaim:
+            claimName: cassandra-db-volume-claim
       hostname: cassandra
   volumeClaimTemplates:
     - metadata:
@@ -83,10 +84,10 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
+        storageClassName: standard
         resources:
           requests:
             storage: 50Gi
-        storageClassName: hostpath
 ---
 apiVersion: v1
 kind: Service

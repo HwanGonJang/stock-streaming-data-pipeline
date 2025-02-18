@@ -2,3 +2,5 @@
 
 finnhub-producer/.venv/
 finnhub-producer/.env
+
+stock-streaming-data-pipeline-helm/*.tgz
