@@ -7,6 +7,7 @@ spec:
   type: Scala
   mode: cluster
   image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stream-processor:latest
+  imagePullPolicy: Always
   mainClass: StreamProcessor
   mainApplicationFile: "local:///opt/spark/jars/streamprocessor-assembly-1.0.jar"
   sparkVersion: "3.0.0"
@@ -26,7 +27,6 @@ spec:
     serviceAccount: spark
     securityContext:
       runAsUser: 0  
-      fsGroup: 0
     volumeMounts:
       - name: spark-volume
         mountPath: /host
@@ -42,7 +42,6 @@ spec:
     memory: "2g"
     securityContext:
       runAsUser: 0  
-      fsGroup: 0
     volumeMounts:
       - name: spark-volume
         mountPath: /host
