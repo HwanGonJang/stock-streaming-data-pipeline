@@ -15,9 +15,6 @@ RUN sbt assembly
 # FROM apache/spark:v3.1.3
 FROM spark:3.5.1
 
-USER root
-RUN mkdir /opt/spark/jars
-USER spark
 COPY --from=maven_builder maven/target/dependency/ /opt/spark/jars/
 COPY --from=sbt_builder sbt/target/scala-2.12/streamprocessor-assembly-1.0.jar /opt/spark/jars/
 
