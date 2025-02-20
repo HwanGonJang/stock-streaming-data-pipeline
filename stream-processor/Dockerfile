@@ -20,3 +20,5 @@ COPY --from=maven_builder maven/target/dependency/ .
 COPY --from=sbt_builder sbt/target/scala-2.12/streamprocessor-assembly-1.0.jar .
 
 USER root
+RUN chmod 644 /opt/spark/jars/streamprocessor-assembly-1.0.jar
+RUN chown 185:185 /opt/spark/jars/streamprocessor-assembly-1.0.jar

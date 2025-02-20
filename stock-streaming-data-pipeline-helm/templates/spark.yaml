@@ -23,13 +23,13 @@ rules:
   - verbs:
       - "*"
     apiGroups:
-      - ""
+      - "*"
     resources:
       - pods
   - verbs:
       - "*"
     apiGroups:
-      - ""
+      - "*"
     resources:
       - services
 
