@@ -1,5 +1,6 @@
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: true
 metadata:
   name: spark
   namespace: pipeline-namespace
@@ -20,19 +21,15 @@ metadata:
     meta.helm.sh/release-name: spark-on-k8s
     meta.helm.sh/release-namespace: spark-operator
 rules:
-  - verbs:
-      - "*"
-    apiGroups:
-      - "*"
-    resources:
-      - pods
-  - verbs:
-      - "*"
-    apiGroups:
-      - "*"
-    resources:
-      - services
-
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch", "create", "delete"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list", "watch", "create", "delete"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch", "create", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -52,3 +49,12 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: spark-role
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: spark-token
+  namespace: pipeline-namespace
+  annotations:
+    kubernetes.io/service-account.name: "spark"
