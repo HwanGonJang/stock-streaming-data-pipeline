@@ -22,6 +22,10 @@ spec:
         fsGroup: 0
       containers:
         - name: cassandra
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 1
           image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/cassandra:latest
           ports:
             - containerPort: 9042
@@ -94,13 +98,32 @@ kind: Service
 metadata:
   name: cassandra
   namespace: pipeline-namespace
-  labels:
-    k8s.service: cassandra
 spec:
   ports:
-    - name: "9042"
+    - protocol: TCP
+      name: "9042"
       port: 9042
       targetPort: 9042
+      nodePort: 30942
   selector:
     k8s.service: cassandra
-  clusterIP: None
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cassandra-ingress
+  namespace: pipeline-namespace
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 'cassandra.hwangonjang.com'
+      http:
+        paths:
+          - backend:
+              service:
+                name: cassandra
+                port:
+                  number: 9042
+            path: /
+            pathType: Prefix

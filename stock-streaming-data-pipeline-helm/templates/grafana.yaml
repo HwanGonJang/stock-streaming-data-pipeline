@@ -33,13 +33,33 @@ kind: Service
 metadata:
   name: grafana
   namespace: pipeline-namespace
-  labels:
-    k8s.service: grafana
 spec:
   ports:
-    - name: "3000"
-      port: 3000
-      targetPort: 3000
+    - protocol: TCP
+      name: "3000"
+      port: 3000          
+      targetPort: 3000    
+      nodePort: 30300
   selector:
     k8s.service: grafana
-  clusterIP: None
+  type: LoadBalancer
+---
+### Define an Ingress to connect with the Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: pipeline-namespace
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 'grafana.hwangonjang.com'
+      http:
+        paths:
+          - backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+            path: /
+            pathType: Prefix
