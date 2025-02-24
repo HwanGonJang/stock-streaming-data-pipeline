@@ -128,7 +128,7 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select symbol, price, trade_timestamp from trades where symbol = 'BINANCE:BTCUSDT' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;\n\n\n"
+          "target": "select symbol, price, trade_timestamp from trades where symbol = 'AAPL' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;\n\n\n"
         }
       ],
       "timeFrom": "5m",
@@ -202,7 +202,7 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select symbol, price_volume_multiply, ingest_timestamp from running_averages_15_sec where symbol='BINANCE:BTCUSDT';"
+          "target": "select symbol, price_volume_multiply, ingest_timestamp from running_averages_15_sec where symbol='AAPL';"
         }
       ],
       "title": "Average price*volume from last 15 seconds",
@@ -294,7 +294,7 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select symbol, volume, trade_timestamp from trades where symbol = 'BINANCE:BTCUSDT' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;"
+          "target": "select symbol, volume, trade_timestamp from trades where symbol = 'AAPL' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;"
         }
       ],
       "timeFrom": "5m",
