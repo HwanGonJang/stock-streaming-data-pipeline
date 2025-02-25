@@ -19,6 +19,7 @@ spec:
       containers:
         - name: finnhubproducer
           image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/finnhub-producer:latest
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: pipeline-config

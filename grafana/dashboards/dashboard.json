@@ -37,7 +37,7 @@
       },
       "id": 8,
       "panels": [],
-      "title": "Apple (AAPL)",
+      "title": "${symbol} Stock Info",
       "type": "row"
     },
     {
@@ -128,11 +128,11 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select symbol, price, trade_timestamp from trades where symbol = 'AAPL' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;\n\n\n"
+          "target": "select symbol, price, trade_timestamp from trades where symbol = '${symbol}' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;\n\n\n"
         }
       ],
       "timeFrom": "5m",
-      "title": "Price AAPL",
+      "title": "${symbol} 가격",
       "type": "timeseries"
     },
     {
@@ -202,7 +202,7 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select symbol, price_volume_multiply, ingest_timestamp from running_averages_15_sec where symbol='AAPL';"
+          "target": "select symbol, price_volume_multiply, ingest_timestamp from running_averages_15_sec where symbol='${symbol}';"
         }
       ],
       "title": "Average price*volume from last 15 seconds",
@@ -294,11 +294,11 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select symbol, volume, trade_timestamp from trades where symbol = 'AAPL' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;"
+          "target": "select symbol, volume, trade_timestamp from trades where symbol = '${symbol}' and trade_timestamp>$__timeFrom and trade_timestamp<$__timeTo;"
         }
       ],
       "timeFrom": "5m",
-      "title": "Volume AAPL",
+      "title": "${symbol} Volume",
       "type": "timeseries"
     }
   ],
@@ -307,7 +307,40 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "AAPL",
+          "value": "AAPL"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "symbol",
+        "options": [
+          {
+            "selected": true,
+            "text": "AAPL",
+            "value": "AAPL"
+          },
+          {
+            "selected": false,
+            "text": "AMZN",
+            "value": "AMZN"
+          },
+          {
+            "selected": false,
+            "text": "GOOG",
+            "value": "GOOG"
+          }
+        ],
+        "query": "AAPL,AMZN,GOOG",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
   },
   "time": {
     "from": "now-6h",
@@ -319,7 +352,7 @@
     ]
   },
   "timezone": "",
-  "title": "Finnhub sample AAPL dashboard",
+  "title": "Dashboard for Stock Items",
   "uid": "oaK8xaOVz",
   "version": 1,
   "weekStart": ""

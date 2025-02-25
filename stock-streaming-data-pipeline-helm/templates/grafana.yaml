@@ -19,6 +19,7 @@ spec:
       containers:
         - name: grafana
           image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/grafana:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:

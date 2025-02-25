@@ -72,4 +72,7 @@ spec:
             requests:
               memory: 32Mi
               cpu: 60m
+            limits:
+              memory: 32Mi
+              cpu: 60m
       restartPolicy: Always
