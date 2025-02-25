@@ -61,6 +61,7 @@ spec:
               memory: 1Gi
               cpu: 1
           image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/kafka:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 9092
             - containerPort: 29092
@@ -107,7 +108,7 @@ spec:
                 command: ["/bin/sh", "-c", "chmod +x /kafka-setup-k8s.sh && /kafka-setup-k8s.sh"]
           volumeMounts:
             - name: kafka-volume
-              mountPath: /var/data
+              mountPath: /var/lib/kafka
         - name: kafdrop
           image: obsidiandynamics/kafdrop:3.30.0
           ports:

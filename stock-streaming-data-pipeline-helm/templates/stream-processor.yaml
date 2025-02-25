@@ -19,15 +19,18 @@ spec:
     onSubmissionFailureRetryInterval: 10
   volumes:
     - name: spark-volume
-      hostPath:
-        path: /host
+      persistentVolumeClaim:
+        claimName: spark-volume-pvc
+    - name: spark-work
+      emptyDir:
+        sizeLimit: 5Gi
   driver:
     cores: 1
     memory: 512m
     serviceAccount: spark
     volumeMounts:
-      - name: spark-volume
-        mountPath: /host
+      - name: spark-work
+        mountPath: /mnt/spark/work
     javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
     - configMapRef:
@@ -39,8 +42,10 @@ spec:
     instances: 1
     memory: 512m
     volumeMounts:
-      - name: spark-volume
-        mountPath: /host
+      - name: spark-data
+        mountPath: /mnt/spark/data
+      - name: spark-work
+        mountPath: /mnt/spark/work
     javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
     - configMapRef:
