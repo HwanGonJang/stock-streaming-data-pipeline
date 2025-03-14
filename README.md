@@ -4,6 +4,8 @@
 The Stock Streaming Data Pipeline System collects real-time stock data via the Finnhub WebSocket, processes messages through Kafka, and utilizes Spark Streaming for data processing. The processed data is stored in Cassandra for analysis and visualization using Grafana. The system runs on a Kubernetes-based infrastructure.
 
 ## System Architecture
+![image](https://github.com/user-attachments/assets/cec4adcd-48c0-40b6-8607-c295e3a4d5d7)
+
 ### 0. Infrastructure Layer
 - **Operating System**: Ubuntu 24.02 LTS
 - **Containerization**: Kubernetes v1.31, Docker v24.0.7, containerd v1.7.23, Calico v3.29.0, Helm v3.16.2
@@ -36,6 +38,7 @@ The Stock Streaming Data Pipeline System collects real-time stock data via the F
 - Custom dashboard templates
 
 ## Installation Guide
+![image](https://github.com/user-attachments/assets/8d93bc80-66e6-471a-a7bd-dd55752a777a)
 
 ```sh
 export S3_BUCKET_NAME=gon-data-pipeline-helm
