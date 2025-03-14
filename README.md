@@ -61,6 +61,9 @@ helm repo add gon-data-pipeline s3://$S3_BUCKET_NAME
 └── grafana/                        # Visualization layer
 ```
 
+## Reference
+This project reference this [link](https://github.com/RSKriegs/finnhub-streaming-data-pipeline?tab=readme-ov-file).
+
 ## Contact
 For any inquiries, please reach out via GitHub Issues or email.
 
