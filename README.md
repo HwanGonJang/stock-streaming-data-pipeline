@@ -42,11 +42,12 @@ The Stock Streaming Data Pipeline System collects real-time stock data via the F
 
 ```sh
 export S3_BUCKET_NAME=gon-data-pipeline-helm
-helm s3 init s3://$S3_BUCKET_NAME
-# Initialized empty repository at s3://$S3_BUCKET_NAME
 
-helm repo add gon-data-pipeline s3://$S3_BUCKET_NAME
+# Initialized empty repository at s3://$S3_BUCKET_NAME
+helm s3 init s3://$S3_BUCKET_NAME
+
 # "gon-data-pipeline" has been added to your repositories
+helm repo add gon-data-pipeline s3://$S3_BUCKET_NAME
 ```
 
 ## Repository Structure
