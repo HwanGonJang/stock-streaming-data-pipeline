@@ -1,49 +1,49 @@
-apiVersion: sparkoperator.k8s.io/v1beta2
-kind: SparkApplication
-metadata:
-  name: streamprocessor
-  namespace: pipeline-namespace
-spec:
-  type: Scala
-  mode: cluster
-  image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stream-processor:latest
-  imagePullPolicy: Always
-  mainClass: StreamProcessor
-  mainApplicationFile: local:///opt/spark/jars/streamprocessor-assembly-1.0.jar
-  sparkVersion: 3.5.1
-  restartPolicy:
-    type: OnFailure
-    onFailureRetries: 3
-    onFailureRetryInterval: 10
-    onSubmissionFailureRetries: 3
-    onSubmissionFailureRetryInterval: 10
-  volumes:
-    - name: spark-volume
-      persistentVolumeClaim:
-        claimName: spark-volume-pvc
-  driver:
-    cores: 1
-    memory: 512m
-    serviceAccount: spark
-    volumeMounts:
-      - name: spark-volume
-        mountPath: /mnt/spark/data
-    javaOptions: "-Dconfig.resource=deployment.conf"
-    envFrom:
-    - configMapRef:
-        name: pipeline-config
-    - secretRef:
-        name: pipeline-secrets
-  executor:
-    cores: 1
-    instances: 1
-    memory: 512m
-    volumeMounts:
-      - name: spark-volume
-        mountPath: /mnt/spark/data
-    javaOptions: "-Dconfig.resource=deployment.conf"
-    envFrom:
-    - configMapRef:
-        name: pipeline-config
-    - secretRef:
-        name: pipeline-secrets
+# apiVersion: sparkoperator.k8s.io/v1beta2
+# kind: SparkApplication
+# metadata:
+#   name: streamprocessor
+#   namespace: pipeline-namespace
+# spec:
+#   type: Scala
+#   mode: cluster
+#   image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stream-processor:latest
+#   imagePullPolicy: Always
+#   mainClass: StreamProcessor
+#   mainApplicationFile: local:///opt/spark/jars/streamprocessor-assembly-1.0.jar
+#   sparkVersion: 3.5.1
+#   restartPolicy:
+#     type: OnFailure
+#     onFailureRetries: 3
+#     onFailureRetryInterval: 10
+#     onSubmissionFailureRetries: 3
+#     onSubmissionFailureRetryInterval: 10
+#   volumes:
+#     - name: spark-volume
+#       persistentVolumeClaim:
+#         claimName: spark-volume-pvc
+#   driver:
+#     cores: 1
+#     memory: 512m
+#     serviceAccount: spark
+#     volumeMounts:
+#       - name: spark-volume
+#         mountPath: /mnt/spark/data
+#     javaOptions: "-Dconfig.resource=deployment.conf"
+#     envFrom:
+#     - configMapRef:
+#         name: pipeline-config
+#     - secretRef:
+#         name: pipeline-secrets
+#   executor:
+#     cores: 1
+#     instances: 1
+#     memory: 512m
+#     volumeMounts:
+#       - name: spark-volume
+#         mountPath: /mnt/spark/data
+#     javaOptions: "-Dconfig.resource=deployment.conf"
+#     envFrom:
+#     - configMapRef:
+#         name: pipeline-config
+#     - secretRef:
+#         name: pipeline-secrets
