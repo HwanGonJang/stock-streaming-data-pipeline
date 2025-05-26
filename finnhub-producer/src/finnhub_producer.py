@@ -28,7 +28,7 @@ class FinnhubProducer:
         load_dotenv()  # Load environment variables from .env file
 
         required_vars = [
-            'FINNHUB_API_TOKEN', 'KAFKA_SERVER', 'KAFKA_PORT',
+            'FINNHUB_API_TOKEN_TRADES', 'KAFKA_SERVER', 'KAFKA_PORT',
             'FINNHUB_STOCKS_TICKERS', 'KAFKA_TOPIC_NAME', 'FINNHUB_VALIDATE_TICKERS'
         ]
 
@@ -36,7 +36,7 @@ class FinnhubProducer:
             if not os.getenv(var):
                 raise ValueError(f'Missing required environment variable: {var}')
 
-        self.api_token = os.getenv('FINNHUB_API_TOKEN')
+        self.api_token = os.getenv('FINNHUB_API_TOKEN_TRADES')
         self.kafka_server = os.getenv('KAFKA_SERVER')
         self.kafka_port = os.getenv('KAFKA_PORT')
         self.kafka_topic = os.getenv('KAFKA_TOPIC_NAME')

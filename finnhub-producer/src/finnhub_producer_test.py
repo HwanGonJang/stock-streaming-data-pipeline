@@ -25,14 +25,14 @@ class FinnhubProducer:
         load_dotenv()  # Load environment variables from .env file
 
         required_vars = [
-            'FINNHUB_API_TOKEN', 'FINNHUB_STOCKS_TICKERS', 'FINNHUB_VALIDATE_TICKERS'
+            'FINNHUB_API_TOKEN_TRADES', 'FINNHUB_STOCKS_TICKERS', 'FINNHUB_VALIDATE_TICKERS'
         ]
 
         for var in required_vars:
             if not os.getenv(var):
                 raise ValueError(f'Missing required environment variable: {var}')
 
-        self.api_token = os.getenv('FINNHUB_API_TOKEN')
+        self.api_token = os.getenv('FINNHUB_API_TOKEN_TRADES')
         self.validate_tickers = os.getenv('FINNHUB_VALIDATE_TICKERS') == '1'
 
         # Convert tickers string to list safely
