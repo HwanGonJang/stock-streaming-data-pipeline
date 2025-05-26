@@ -9,7 +9,7 @@ metadata:
   name: pipeline-config
   namespace: pipeline-namespace
 data:
-  FINNHUB_STOCKS_TICKERS: '["AAPL", "GOOG", "AMZN"]'  # TODO: Update to your stock tickers
+  FINNHUB_STOCKS_TICKERS: '["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "AVGO", "CRM", "ORCL"]'  # TODO: Update to your stock tickers
   FINNHUB_VALIDATE_TICKERS: "1"
 
   KAFKA_SERVER: "kafka-service.pipeline-namespace.svc.cluster.local"

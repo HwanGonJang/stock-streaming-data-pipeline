@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: newsproducer
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: newsproducer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: newsproducer
+  template:
+    metadata:
+      labels:
+        k8s.network/pipeline-network: "true"
+        k8s.service: newsproducer
+    spec:
+      containers:
+        - name: newsproducer
+          image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/news-producer:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: pipeline-config
+            - secretRef:
+                name: pipeline-secrets
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: newsproducer
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: newsproducer
+spec:
+  clusterIP: None
+  ports:
+    - name: "8001"
+      port: 8001
+      targetPort: 8001
+  selector:
+    k8s.service: newsproducer
