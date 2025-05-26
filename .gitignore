@@ -1,7 +1,10 @@
 .vscode
 
 finnhub-producer/.venv/
+news-producer/.venv/
 stream-processor-light/.venv/
 finnhub-producer/.env
+news-producer/.env
+stream-processor-light/.env
 
 stock-streaming-data-pipeline-helm/*.tgz

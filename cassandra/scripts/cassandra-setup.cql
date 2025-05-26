@@ -25,3 +25,20 @@ CREATE TABLE IF NOT EXISTS running_averages_15_sec(
 WITH CLUSTERING ORDER BY (ingest_timestamp DESC);
 
 CREATE INDEX IF NOT EXISTS ON running_averages_15_sec (symbol);
+
+CREATE TABLE IF NOT EXISTS news(
+    uuid uuid,
+    symbol text,
+    category text,
+    datetime timestamp,
+    headline text,
+    news_id bigint,
+    image text,
+    source text,
+    summary text,
+    url text,
+    ingest_timestamp timestamp,
+    PRIMARY KEY((symbol), datetime))
+WITH CLUSTERING ORDER BY (datetime DESC);
+
+CREATE INDEX IF NOT EXISTS ON news (uuid);

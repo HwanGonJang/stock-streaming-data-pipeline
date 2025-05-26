@@ -66,7 +66,8 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && chmod +x /cassandra-setup.cql && cqlsh localhost -f /cassandra-setup.cql"]
+                command: ["/bin/sh", "-c", "sleep 120 && echo loading cassandra keyspace && chmod +x /cassandra-setup.cql"]
+                # command: ["/bin/sh", "-c", "sleep 120 && echo loading cassandra keyspace && chmod +x /cassandra-setup.cql && cqlsh localhost -f /cassandra-setup.cql"]
           readinessProbe:
             tcpSocket:
               port: 9042
