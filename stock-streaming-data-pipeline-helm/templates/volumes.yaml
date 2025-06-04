@@ -61,3 +61,22 @@ spec:
   resources:
     requests:
       storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-data
+  labels:
+    type: local
+    app: redis
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /data/redis-data
+    type: DirectoryOrCreate
+---

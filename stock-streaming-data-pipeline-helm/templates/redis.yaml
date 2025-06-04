@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: pipeline-namespace
+data:
+  redis.conf: |
+    # Redis configuration for market data aggregation
+    
+    # Memory optimization
+    maxmemory 2gb
+    maxmemory-policy allkeys-lru
+    
+    # Persistence configuration
+    save 900 1
+    save 300 10
+    save 60 10000
+    
+    # Network settings
+    bind 0.0.0.0
+    port 6379
+    tcp-keepalive 300
+    
+    # Log settings
+    loglevel notice
+    
+    # Database settings
+    databases 16
+    
+    # Performance tuning
+    tcp-backlog 511
+    timeout 0
+    
+    # Append only file
+    appendonly yes
+    appendfsync everysec
+    
+    # Disable dangerous commands
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    rename-command DEBUG ""
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: redis
+  template:
+    metadata:
+      labels:
+        k8s.service: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.2-alpine
+        ports:
+        - containerPort: 6379
+          name: redis
+        command:
+          - redis-server
+          - /etc/redis/redis.conf
+        volumeMounts:
+        - name: redis-config
+          mountPath: /etc/redis/
+        - name: redis-data
+          mountPath: /data
+        livenessProbe:
+          tcpSocket:
+            port: 6379
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+              - redis-cli
+              - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pipeline-secrets
+              key: REDIS_PASSWORD
+              optional: true
+      volumes:
+      - name: redis-config
+        configMap:
+          name: redis-config
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 2Gi
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: pipeline-namespace
+spec:
+  ports:
+    - protocol: TCP
+      name: "6379"
+      port: 6379
+      targetPort: 6379
+      nodePort: 30637
+  selector:
+    k8s.service: redis
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cassandra-ingress
+  namespace: pipeline-namespace
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 'redis.hwangonjang.com'
+      http:
+        paths:
+          - backend:
+              service:
+                name: redis
+                port:
+                  number: 6379
+            path: /
+            pathType: Prefix
