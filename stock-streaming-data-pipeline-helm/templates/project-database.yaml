@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: project-database
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: project-database
+spec:
+  serviceName: project-database
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: project-database
+  template:
+    metadata:
+      labels:
+        k8s.network/pipeline-network: "true"
+        k8s.service: project-database
+    spec:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
+      containers:
+        - name: project-database
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 1
+          image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/project-database:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "gon_stock_dashboard"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pipeline-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pipeline-secrets
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: postgres-db-volume
+              mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 30 && echo PostgreSQL initialization complete"]
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+            initialDelaySeconds: 30
+            periodSeconds: 20
+      volumes:
+        - name: project-database-volume
+          persistentVolumeClaim:
+            claimName: project-database-volume-claim
+      hostname: project-database
+  volumeClaimTemplates:
+    - metadata:
+        name: project-database-volume
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 50Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-database
+  namespace: pipeline-namespace
+spec:
+  ports:
+    - protocol: TCP
+      name: "5432"
+      port: 5432
+      targetPort: 5432
+      nodePort: 30543
+  selector:
+    k8s.service: project-database
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: project-database-ingress
+  namespace: pipeline-namespace
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 'psql.hwangonjang.com'
+      http:
+        paths:
+          - backend:
+              service:
+                name: project-database
+                port:
+                  number: 5432
+            path: /
+            pathType: Prefix
+---

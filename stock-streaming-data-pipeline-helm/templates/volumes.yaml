@@ -80,3 +80,39 @@ spec:
     path: /data/redis-data
     type: DirectoryOrCreate
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: project-database-volume-0
+  labels:
+    type: local
+    app: project-database-app
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /data/project-database-volume-0
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: stock-slm-volume
+  labels:
+    type: local
+    app: stock-slm-volume
+spec:
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /data/stock-slm-volume
+    type: DirectoryOrCreate
+---

@@ -1,0 +1,199 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stock-data-sync-daily-news
+  namespace: pipeline-namespace
+spec:
+  # Run daily at 9:00 AM ET (13:00 UTC) - befor market open
+  schedule: "0 13 * * 1-5"  # Weekdays only
+  timeZone: "UTC"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: stock-data-sync
+            image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stock-data-sync:latest
+            command: ["python", "src/main.py", "daily-news"]
+            env:
+            - name: SYNC_TYPE
+              value: "daily"
+            envFrom:
+            - configMapRef:
+                name: pipeline-config
+            - secretRef:
+                name: pipeline-secrets
+          restartPolicy: OnFailure
+      backoffLimit: 3
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stock-data-sync-daily-prices
+  namespace: pipeline-namespace
+spec:
+  # Run daily at 5:30 PM ET (21:30 UTC) - after market close
+  schedule: "30 21 * * 1-5"  # Weekdays only
+  timeZone: "UTC"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: stock-data-sync
+            image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stock-data-sync:latest
+            command: ["python", "src/main.py", "daily-prices"]
+            env:
+            - name: SYNC_TYPE
+              value: "daily"
+            envFrom:
+            - configMapRef:
+                name: pipeline-config
+            - secretRef:
+                name: pipeline-secrets
+          restartPolicy: OnFailure
+      backoffLimit: 3
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stock-data-sync-weekly
+  namespace: pipeline-namespace
+spec:
+  # Run weekly on Sundays at 2:00 AM ET (06:00 UTC)
+  schedule: "30 13 * * 6"  # Sundays only
+  timeZone: "UTC"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: stock-data-sync
+            image: stock-data-sync:latest
+            command: ["python", "src/main.py", "weekly"]
+            env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: stock-db-secret
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: stock-db-secret
+                  key: port
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: stock-db-secret
+                  key: database
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: stock-db-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stock-db-secret
+                  key: password
+            - name: ALPHA_VANTAGE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys-secret
+                  key: alpha-vantage-key
+            - name: FINNHUB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-keys-secret
+                  key: finnhub-key
+            - name: STOCK_SYMBOLS
+              value: "AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,NFLX,CRM,ORCL"
+            - name: SYNC_TYPE
+              value: "weekly"
+            resources:
+              requests:
+                memory: "256Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+                cpu: "500m"
+          restartPolicy: OnFailure
+      backoffLimit: 3
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+---
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: stock-data-sync-quarterly
+#   namespace: pipeline-namespace
+# spec:
+#   # Run quarterly on the 1st day of each quarter at 3:00 AM ET (07:00 UTC)
+#   # January 1st, April 1st, July 1st, October 1st
+#   schedule: "0 7 1 1,4,7,10 *"
+#   timeZone: "UTC"
+#   jobTemplate:
+#     spec:
+#       template:
+#         spec:
+#           containers:
+#           - name: stock-data-sync
+#             image: stock-data-sync:latest
+#             command: ["python", "src/main.py", "quarterly"]
+#             env:
+#             - name: DB_HOST
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: stock-db-secret
+#                   key: host
+#             - name: DB_PORT
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: stock-db-secret
+#                   key: port
+#             - name: DB_NAME
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: stock-db-secret
+#                   key: database
+#             - name: DB_USER
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: stock-db-secret
+#                   key: username
+#             - name: DB_PASSWORD
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: stock-db-secret
+#                   key: password
+#             - name: ALPHA_VANTAGE_API_KEY
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: api-keys-secret
+#                   key: alpha-vantage-key
+#             - name: FINNHUB_API_KEY
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: api-keys-secret
+#                   key: finnhub-key
+#             - name: STOCK_SYMBOLS
+#               value: "AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,NFLX,CRM,ORCL"
+#             - name: SYNC_TYPE
+#               value: "quarterly"
+#             resources:
+#               requests:
+#                 memory: "512Mi"
+#                 cpu: "200m"
+#               limits:
+#                 memory: "1Gi"
+#                 cpu: "1000m"
+#           restartPolicy: OnFailure
+#       backoffLimit: 3
+#   successfulJobsHistoryLimit: 3
+#   failedJobsHistoryLimit: 3
+# ---

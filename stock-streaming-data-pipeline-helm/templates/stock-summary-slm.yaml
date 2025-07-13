@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-slm
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: stock-slm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: stock-slm
+  template:
+    metadata:
+      labels:
+        k8s.network/pipeline-network: "true"
+        k8s.service: stock-slm
+    spec:
+      containers:
+        - name: stock-slm
+          image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stock-slm:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: pipeline-config
+            - secretRef:
+                name: pipeline-secrets
+          # resources:
+          #   limits:
+          #     nvidia.com/gpu: 1
+          #   requests:
+          #     nvidia.com/gpu: 1
+          # env:
+          # - name: NVIDIA_VISIBLE_DEVICES
+          #   value: "all"
+          # - name: NVIDIA_DRIVER_CAPABILITIES
+          #   value: "compute,utility"
+          volumeMounts:
+            - name: stock-slm-volume
+              mountPath: /var/lib/stock-slm
+            # - name: nvidia-driver
+            #   mountPath: /usr/local/nvidia
+            #   readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: stock-slm-volume
+          persistentVolumeClaim:
+            claimName: stock-slm-volume-claim
+        # - name: nvidia-driver
+        #   hostPath:
+        #     path: /usr/local/nvidia
+  volumeClaimTemplates:
+    - metadata:
+        name: stock-slm-volume
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 25Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-slm
+  namespace: pipeline-namespace
+spec:
+  ports:
+    - protocol: TCP
+      name: "8000"
+      port: 8000          
+      targetPort: 8000    
+      nodePort: 30800
+  selector:
+    k8s.service: stock-slm
+  type: LoadBalancer
+---
+### Define an Ingress to connect with the Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stock-slm-ingress
+  namespace: pipeline-namespace
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 'slm-api.hwangonjang.com'
+      http:
+        paths:
+          - backend:
+              service:
+                name: stock-slm
+                port:
+                  number: 8000
+            path: /
+            pathType: Prefix
