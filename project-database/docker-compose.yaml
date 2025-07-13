@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gon_stock_dashboard_db
+    environment:
+      POSTGRES_DB: gon_stock_dashboard
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123!
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./ddl.sql:/docker-entrypoint-initdb.d/01-ddl.sql
+      - ./init-user.sql:/docker-entrypoint-initdb.d/02-init-user.sql
+    networks:
+      - gon_stock_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d gon_stock_dashboard"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  gon_stock_network:
+    driver: bridge
