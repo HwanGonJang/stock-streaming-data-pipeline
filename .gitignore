@@ -3,8 +3,12 @@
 finnhub-producer/.venv/
 news-producer/.venv/
 stream-processor-light/.venv/
+stream-data-sync/.venv/
+stock-summary-slm/.venv/
 finnhub-producer/.env
 news-producer/.env
 stream-processor-light/.env
+stream-data-sync/.env
+stock-summary-slm/.env
 
 stock-streaming-data-pipeline-helm/*.tgz
