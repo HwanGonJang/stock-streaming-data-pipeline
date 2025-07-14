@@ -15,7 +15,7 @@ class StockStreamingService(
         symbol: String,
         intervalSeconds: Long = 1L,
         useKoreanTimeSimulation: Boolean = false,
-        debugFixedDate: LocalDate? = null
+        debugFixedDate: LocalDate? = LocalDate.of(2025, 6, 20)  // 디버깅용 고정 날짜 파라미터
     ): Flux<TradeDto> {
         return if (useKoreanTimeSimulation) {
             if (debugFixedDate != null) {

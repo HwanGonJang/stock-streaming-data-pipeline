@@ -13,12 +13,12 @@ spring:
     url: ${DB_URI}
 
   cassandra:
-    contact-points: localhost
+    contact-points: ${CASSANDRA_HOST}
     port: 9042
     local-datacenter: dc1
-    keyspace-name: market
-    username: cassandra
-    password: cassandra
+    keyspace-name: ${CASSANDRA_KEYSPACE}
+    username: ${CASSANDRA_USERNAME}
+    password: ${CASSANDRA_PASSWORD}
     request:
       timeout: 30s
 

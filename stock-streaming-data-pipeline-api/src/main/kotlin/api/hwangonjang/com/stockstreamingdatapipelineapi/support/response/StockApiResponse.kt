@@ -1,6 +1,5 @@
 package api.hwangonjang.com.stockstreamingdatapipelineapi.support.response
 
-import com.example.anbdapi.support.response.CommonResponseCode
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -31,7 +30,7 @@ data class StockApiResponse<T>(
         ): StockApiResponse<T> = StockApiResponse(
             traceId = traceId,
             status = HttpStatus.OK.value(),
-            code = CommonResponseCode.COMMON_00,
+            code = CommonResponseCode.COMMON_01,
             timestamp = LocalDateTime.now(),
             body = body
         )
@@ -43,7 +42,7 @@ data class StockApiResponse<T>(
         ): StockApiResponse<T> = StockApiResponse(
             traceId = traceId,
             status = status.value(),
-            code = CommonResponseCode.COMMON_00,
+            code = CommonResponseCode.COMMON_01,
             timestamp = LocalDateTime.now(),
             body = body
         )
