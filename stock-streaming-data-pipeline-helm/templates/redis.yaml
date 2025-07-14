@@ -129,7 +129,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: cassandra-ingress
+  name: redis-ingress
   namespace: pipeline-namespace
 spec:
   ingressClassName: nginx

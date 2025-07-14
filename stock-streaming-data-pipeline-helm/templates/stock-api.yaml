@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-api
+  namespace: pipeline-namespace
+  labels:
+    k8s.service: stock-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s.service: stock-api
+  template:
+    metadata:
+      labels:
+        k8s.network/pipeline-network: "true"
+        k8s.service: stock-api
+    spec:
+      containers:
+        - name: stock-api
+          image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stock-api:latest
+          imagePullPolicy: Always
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-api
+  namespace: pipeline-namespace
+spec:
+  ports:
+    - protocol: TCP
+      name: "8080"
+      port: 8080          
+      targetPort: 8080    
+      nodePort: 30880
+  selector:
+    k8s.service: stock-api
+  type: LoadBalancer
+---
+### Define an Ingress to connect with the Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stock-api-ingress
+  namespace: pipeline-namespace
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: 'api.hwangonjang.com'
+      http:
+        paths:
+          - backend:
+              service:
+                name: stock-api
+                port:
+                  number: 8080
+            path: /
+            pathType: Prefix

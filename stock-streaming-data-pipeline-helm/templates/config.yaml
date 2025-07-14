@@ -23,6 +23,9 @@ data:
   SPARK_SHUFFLE_PARTITIONS: "2"
   SPARK_DEPRECATED_OFFSETS: "False"
 
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+
   OLLAMA_HOST: "localhost:11434"
 ---
 apiVersion: policy/v1

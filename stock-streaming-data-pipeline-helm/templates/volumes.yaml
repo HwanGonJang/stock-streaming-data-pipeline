@@ -116,3 +116,16 @@ spec:
     path: /data/stock-slm-volume
     type: DirectoryOrCreate
 ---
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: stock-slm-volume-claim
+  namespace: pipeline-namespace
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 25Gi

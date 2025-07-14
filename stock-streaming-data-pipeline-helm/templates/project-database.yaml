@@ -49,10 +49,8 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
           volumeMounts:
-            - name: postgres-db-volume
+            - name: project-database-volume
               mountPath: /var/lib/postgresql/data
-            - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d
           lifecycle:
             postStart:
               exec:
