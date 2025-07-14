@@ -17,7 +17,7 @@ echo "Ollama is ready!"
 echo "Checking for required models..."
 
 # 8GB 메모리용 경량 모델들
-MODELS=("phi3:mini" "nomic-embed-text")
+MODELS=("phi3:mini")
 
 for model in "${MODELS[@]}"; do
     if ! ollama list | grep -q "$model"; then
@@ -29,4 +29,4 @@ for model in "${MODELS[@]}"; do
 done
 
 echo "Starting FastAPI application..."
-exec python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 1
+exec python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1

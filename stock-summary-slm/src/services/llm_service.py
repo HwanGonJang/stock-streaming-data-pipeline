@@ -43,30 +43,44 @@ NEWS SENTIMENT:
 MARKET METRICS:
 {market_metrics}
 
-Please provide a professional investment analysis summary with the following structure:
+Please provide a professional investment analysis summary as plain text formatted for web display. Use the following structure with clear section breaks and proper spacing:
 
-## Executive Summary
-[2-3 sentences highlighting the key investment thesis and overall outlook]
+===== INVESTMENT ANALYSIS REPORT =====
 
-## Financial Performance
-[Analysis of revenue growth, profitability trends, and key financial metrics]
+[ EXECUTIVE SUMMARY ]
+2-3 sentences highlighting the key investment thesis and overall outlook.
 
-## Strengths
-[Key competitive advantages and positive factors]
+[ FINANCIAL PERFORMANCE ]
+Analysis of revenue growth, profitability trends, and key financial metrics. Include specific numbers and percentages where available.
 
-## Risks & Concerns
-[Main risks and potential challenges]
+[ STRENGTHS ]
+• Key competitive advantages
+• Positive market factors  
+• Strong financial indicators
+• Growth opportunities
 
-## Market Position
-[Industry context and competitive positioning]
+[ RISKS & CONCERNS ]
+• Main operational risks
+• Market challenges
+• Financial concerns
+• Regulatory or industry risks
 
-## Recent Developments
-[Analysis of recent news and market sentiment]
+[ MARKET POSITION ]
+Industry context and competitive positioning. Compare to peers and market trends.
 
-## Conclusion
-[Final assessment and key takeaways for investors]
+[ RECENT DEVELOPMENTS ]
+Analysis of recent news, market sentiment, and key events affecting the stock.
 
-Keep the analysis objective, professional, and suitable for web display. Use clear formatting and avoid overly technical jargon.
+[ CONCLUSION ]
+Final assessment and key takeaways for investors. Include outlook and recommendations.
+
+Format Requirements:
+- Use plain text only (no markdown syntax)
+- Use clear section dividers and bullet points
+- Maintain professional tone suitable for financial reports
+- Include specific metrics and numbers where possible
+- Keep paragraphs concise and readable
+- Use proper spacing between sections
 """
         )
     
@@ -310,23 +324,47 @@ SHARE STRUCTURE:
             raise
     
     def _clean_summary(self, summary: str) -> str:
-        """Clean and format the generated summary"""
+        """Clean and format the generated summary for plain text display"""
         # Remove any unwanted prefixes or suffixes
         summary = summary.strip()
         
-        # Ensure proper markdown formatting
+        # Remove any markdown formatting that might have been generated
         lines = summary.split('\n')
         cleaned_lines = []
         
         for line in lines:
             line = line.strip()
             if line:
-                # Ensure proper header formatting
-                if line.startswith('##') and not line.startswith('## '):
-                    line = line.replace('##', '## ', 1)
-                elif line.startswith('#') and not line.startswith('# '):
-                    line = line.replace('#', '# ', 1)
+                # Remove markdown headers and replace with plain text formatting
+                if line.startswith('###'):
+                    line = line.replace('###', '').strip()
+                elif line.startswith('##'):
+                    line = line.replace('##', '').strip()
+                elif line.startswith('#'):
+                    line = line.replace('#', '').strip()
+                
+                # Remove markdown bold/italic formatting
+                line = line.replace('**', '').replace('*', '')
+                
+                # Remove markdown list formatting and ensure consistent bullet points
+                if line.startswith('- '):
+                    line = '• ' + line[2:]
                 
                 cleaned_lines.append(line)
         
-        return '\n\n'.join(cleaned_lines)
+        # Join lines with proper spacing for readability
+        formatted_text = []
+        for i, line in enumerate(cleaned_lines):
+            formatted_text.append(line)
+            
+            # Add extra spacing after section headers and before new sections
+            if (line.startswith('[') and line.endswith(']')) or line.startswith('====='):
+                if i < len(cleaned_lines) - 1:
+                    formatted_text.append('')
+            # Add spacing after paragraphs
+            elif line and not line.startswith('•') and i < len(cleaned_lines) - 1:
+                next_line = cleaned_lines[i + 1] if i + 1 < len(cleaned_lines) else ''
+                if next_line and (next_line.startswith('[') or next_line.startswith('•')):
+                    formatted_text.append('')
+        
+        return '\n'.join(formatted_text)

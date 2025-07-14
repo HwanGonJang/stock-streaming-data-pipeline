@@ -13,38 +13,6 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Ollama
-RUN curl -fsSL https://ollama.ai/install.sh | sh
-
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code from src directory
-COPY src/ ./src/
-
-# Create directory for Ollama models (will be mounted as volume)
-RUN mkdir -p /root/.ollama
-
-# Use Python 3.11 slim image
-FROM python:3.11-slim
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV OLLAMA_HOST=0.0.0.0:11434
-
-# Set work directory
-WORKDIR /app
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    build-essential \
     bc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -58,9 +26,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code from src directory
-COPY src/ ./src/
+COPY src/ ./
 
-# COPY .env .
+COPY .env .
 
 # Copy startup script
 COPY start.sh .
