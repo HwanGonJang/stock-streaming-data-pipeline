@@ -49,7 +49,7 @@ class StreamProcessor:
         # Initialize Redis connection
         self.redis_client = redis.Redis(
             host=os.getenv('REDIS_HOST', 'redis'),
-            port=int(os.getenv('REDIS_PORT', 6379)),
+            port=int(os.getenv('REDIS_PORT', '6379')),
             decode_responses=True
         )
         

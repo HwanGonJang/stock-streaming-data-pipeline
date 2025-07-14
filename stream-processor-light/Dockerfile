@@ -9,6 +9,8 @@ RUN pip install -r requirements.txt
 # Copy source code and schemas
 COPY src/ ./src/
 
+COPY .env .env
+
 # Set PYTHONPATH to include the src directory
 ENV PYTHONPATH=/app
 
