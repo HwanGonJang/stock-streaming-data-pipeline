@@ -151,10 +151,10 @@ const About: NextPage = () => {
             <CardContent className="pt-4">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {[
-                  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
-                  'META', 'NFLX', 'NVDA', 'AMD', 'INTC',
-                  'ORCL', 'CRM', 'ADBE', 'PYPL', 'SHOP',
-                  'SPOT', 'ZOOM', 'UBER', 'LYFT', 'DOCU'
+                  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 
+                  'NVDA', 'TSLA', 'AVGO', 'CRM', 'ORCL', 
+                  'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 
+                  'CSCO', 'QCOM', 'TXN', 'AMAT', 'PLTR'
                 ].map((symbol) => (
                   <Badge key={symbol} variant="outline" className="justify-center py-2">
                     {symbol}

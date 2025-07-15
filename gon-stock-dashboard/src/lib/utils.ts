@@ -120,6 +120,7 @@ export function isValidSymbol(symbol: string): boolean {
   const validSymbols = [
     'AAPL', 'MSFT'
   ];
+
   return validSymbols.includes(symbol.toUpperCase());
 }
 

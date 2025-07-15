@@ -11,25 +11,25 @@ export const SUPPORTED_SYMBOLS: SupportedSymbol[] = [
 
 export const COMPANY_NAMES: Record<SupportedSymbol, string> = {
   AAPL: 'Apple Inc.',
-  MSFT: 'Microsoft Corporation',
-  GOOGL: 'Alphabet Inc.',
-  AMZN: 'Amazon.com Inc.',
-  META: 'Meta Platforms Inc.',
-  NVDA: 'NVIDIA Corporation',
-  TSLA: 'Tesla Inc.',
-  AVGO: 'Broadcom Inc.',
-  CRM: 'Salesforce Inc.',
-  ORCL: 'Oracle Corporation',
-  NFLX: 'Netflix Inc.',
-  ADBE: 'Adobe Inc.',
-  AMD: 'Advanced Micro Devices Inc.',
-  INTC: 'Intel Corporation',
-  PYPL: 'PayPal Holdings Inc.',
-  CSCO: 'Cisco Systems Inc.',
-  QCOM: 'QUALCOMM Incorporated',
-  TXN: 'Texas Instruments Incorporated',
-  AMAT: 'Applied Materials Inc.',
-  PLTR: 'Palantir Technologies Inc.'
+  MSFT: 'Microsoft Corporation'
+  // GOOGL: 'Alphabet Inc.',
+  // AMZN: 'Amazon.com Inc.',
+  // META: 'Meta Platforms Inc.',
+  // NVDA: 'NVIDIA Corporation',
+  // TSLA: 'Tesla Inc.',
+  // AVGO: 'Broadcom Inc.',
+  // CRM: 'Salesforce Inc.',
+  // ORCL: 'Oracle Corporation',
+  // NFLX: 'Netflix Inc.',
+  // ADBE: 'Adobe Inc.',
+  // AMD: 'Advanced Micro Devices Inc.',
+  // INTC: 'Intel Corporation',
+  // PYPL: 'PayPal Holdings Inc.',
+  // CSCO: 'Cisco Systems Inc.',
+  // QCOM: 'QUALCOMM Incorporated',
+  // TXN: 'Texas Instruments Incorporated',
+  // AMAT: 'Applied Materials Inc.',
+  // PLTR: 'Palantir Technologies Inc.'
 };
 
 export const RECOMMENDATION_LABELS = {
