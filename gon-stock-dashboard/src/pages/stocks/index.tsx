@@ -15,10 +15,10 @@ export default function StocksPage() {
   const { theme } = useUIStore();
 
   const toggleFavorite = (symbol: string) => {
-    if (favorites.includes(symbol)) {
-      removeFromFavorites(symbol);
+    if (favorites.includes(symbol as any)) {
+      removeFromFavorites(symbol as any);
     } else {
-      addToFavorites(symbol);
+      addToFavorites(symbol as any);
     }
   };
 
@@ -137,7 +137,7 @@ export default function StocksPage() {
                       </span>
                       <div className="relative group">
                         <Badge
-                          variant="secondary"
+                          variant="default"
                           className={cn(
                             'text-xs font-medium cursor-help',
                             getRecommendationColor(recommendation.recommendationScore)
