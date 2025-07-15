@@ -64,7 +64,7 @@ export default function NewsPage() {
         return;
       }
       
-      const symbolNewsData = news[selectedSymbol];
+      const symbolNewsData: any = news[selectedSymbol];
       
       if (!symbolNewsData?.content || !Array.isArray(symbolNewsData.content)) {
         setFilteredNews([]);
