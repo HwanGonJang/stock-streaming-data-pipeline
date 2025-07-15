@@ -5,17 +5,17 @@ load_dotenv()
 
 class Config:
     # Database configuration
-    DB_HOST = os.getenv('DB_HOST', 'localhost')
-    DB_PORT = os.getenv('DB_PORT', '5432')
-    DB_NAME = os.getenv('DB_NAME', 'gon_stock_dashboard')
-    DB_USER = os.getenv('DB_USER', 'admin')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', 'password123!')
+    POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
+    POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
+    POSTGRES_DATABASE = os.getenv('POSTGRES_DATABASE', 'gon_stock_dashboard')
+    POSTGRES_USER = os.getenv('POSTGRES_USER', 'admin')
+    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'password123!')
     
     # API configuration
     ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY')
     
     # Stock symbols to monitor
-    STOCK_SYMBOLS = os.getenv('STOCKS_TICKERS', 'AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,NFLX,CRM,ORCL,NFLX,ADBE,AMD,INTC,PYPL,CSCO,QCOM,TXN,AMAT,PLTR').split(',')
+    STOCK_SYMBOLS = os.getenv('STOCKS_TICKERS', 'AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,AVGO,CRM,ORCL,NFLX,ADBE,AMD,INTC,PYPL,CSCO,QCOM,TXN,AMAT,PLTR').split(',')
     
     # Sync configuration
     SYNC_TYPE = os.getenv('SYNC_TYPE', 'daily')  # daily, weekly, quarterly
@@ -25,7 +25,7 @@ class Config:
     
     @classmethod
     def get_database_url(cls):
-        return f"postgresql://{cls.DB_USER}:{cls.DB_PASSWORD}@{cls.DB_HOST}:{cls.DB_PORT}/{cls.DB_NAME}"
+        return f"postgresql://{cls.POSTGRES_USER}:{cls.POSTGRES_PASSWORD}@{cls.POSTGRES_HOST}:{cls.POSTGRES_PORT}/{cls.POSTGRES_DATABASE}"
     
     @classmethod
     def validate_config(cls):

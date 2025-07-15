@@ -76,7 +76,7 @@ spec:
             image: stock-data-sync:latest
             command: ["python", "src/main.py", "weekly"]
             env:
-            - name: DB_HOST
+            - name: POSTGRES_HOST
               valueFrom:
                 secretKeyRef:
                   name: stock-db-secret
@@ -146,7 +146,7 @@ spec:
 #             image: stock-data-sync:latest
 #             command: ["python", "src/main.py", "quarterly"]
 #             env:
-#             - name: DB_HOST
+#             - name: POSTGRES_HOST
 #               valueFrom:
 #                 secretKeyRef:
 #                   name: stock-db-secret

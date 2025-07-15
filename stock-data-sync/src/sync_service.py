@@ -133,29 +133,29 @@ class StockDataSyncService:
         if stats['saved'] > 0:
             results['success_count'] += 1
 
-        # 2. Balance Sheets
-        all_balance_sheets = {}
-        for symbol in self.symbols:
-            data = self.alpha_vantage.get_balance_sheet(symbol)
-            all_balance_sheets[symbol] = data
-        stats = self._save_balance_sheets_to_database(all_balance_sheets)
-        if stats['failed'] > 0:
-            results['error_count'] += 1
-            results['errors'].append(f"BALANCE_SHEET")
-        if stats['saved'] > 0:
-            results['success_count'] += 1
+        # # 2. Balance Sheets
+        # all_balance_sheets = {}
+        # for symbol in self.symbols:
+        #     data = self.alpha_vantage.get_balance_sheet(symbol)
+        #     all_balance_sheets[symbol] = data
+        # stats = self._save_balance_sheets_to_database(all_balance_sheets)
+        # if stats['failed'] > 0:
+        #     results['error_count'] += 1
+        #     results['errors'].append(f"BALANCE_SHEET")
+        # if stats['saved'] > 0:
+        #     results['success_count'] += 1
 
-        # 3. Cash Flows
-        all_cash_flows = {}
-        for symbol in self.symbols:
-            data = self.alpha_vantage.get_cash_flow(symbol)
-            all_cash_flows[symbol] = data
-        stats = self._save_cash_flows_to_database(all_cash_flows)
-        if stats['failed'] > 0:
-            results['error_count'] += 1
-            results['errors'].append(f"CASH_FLOW")
-        if stats['saved'] > 0:
-            results['success_count'] += 1
+        # # 3. Cash Flows
+        # all_cash_flows = {}
+        # for symbol in self.symbols:
+        #     data = self.alpha_vantage.get_cash_flow(symbol)
+        #     all_cash_flows[symbol] = data
+        # stats = self._save_cash_flows_to_database(all_cash_flows)
+        # if stats['failed'] > 0:
+        #     results['error_count'] += 1
+        #     results['errors'].append(f"CASH_FLOW")
+        # if stats['saved'] > 0:
+        #     results['success_count'] += 1
 
         logger.info(f"Quarterly sync completed. Success: {results['success_count']}, Errors: {results['error_count']}")
         return results

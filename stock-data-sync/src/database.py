@@ -15,11 +15,11 @@ class DatabaseManager:
         """Establish database connection"""
         try:
             self.connection = psycopg2.connect(
-                host=Config.DB_HOST,
-                port=Config.DB_PORT,
-                database=Config.DB_NAME,
-                user=Config.DB_USER,
-                password=Config.DB_PASSWORD,
+                host=Config.POSTGRES_HOST,
+                port=Config.POSTGRES_PORT,
+                database=Config.POSTGRES_DATABASE,
+                user=Config.POSTGRES_USER,
+                password=Config.POSTGRES_PASSWORD,
                 cursor_factory=RealDictCursor
             )
             self.cursor = self.connection.cursor()

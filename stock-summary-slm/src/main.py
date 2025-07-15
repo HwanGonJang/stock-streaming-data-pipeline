@@ -261,7 +261,7 @@ async def batch_generate_summaries(
 ):
     """Generate summaries for multiple stocks in background"""
     
-    STOCK_SYMBOLS = os.getenv('STOCKS_TICKERS', 'AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,NFLX,CRM,ORCL,NFLX,ADBE,AMD,INTC,PYPL,CSCO,QCOM,TXN,AMAT,PLTR').split(',')
+    STOCK_SYMBOLS = os.getenv('STOCKS_TICKERS', 'AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,AVGO,CRM,ORCL,NFLX,ADBE,AMD,INTC,PYPL,CSCO,QCOM,TXN,AMAT,PLTR').split(',')
 
     async def process_batch():
         for symbol in STOCK_SYMBOLS:
