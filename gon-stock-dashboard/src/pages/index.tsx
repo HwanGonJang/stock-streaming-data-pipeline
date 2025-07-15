@@ -183,8 +183,8 @@ const Dashboard: NextPage = () => {
                   {(() => {
                     const newsItems = news && Object.keys(news).length > 0 ? 
                       Object.values(news)
-                        .filter(newsData => newsData?.content && Array.isArray(newsData.content))
-                        .map(newsData => newsData.content)
+                        .filter((newsData: any) => newsData?.content && Array.isArray(newsData.content))
+                        .map((newsData: any) => newsData.content)
                         .flat()
                         .slice(0, 5) : [];
                     
