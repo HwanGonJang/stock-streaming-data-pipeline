@@ -67,7 +67,7 @@ const StockDetail: NextPage = () => {
     );
   }
 
-  const currentPrice = realTimePrices[stockSymbol]?.price || 0;
+  const currentPrice = realTimePrices[stockSymbol]?.price || dailyPrices[0]?.open || 0;
   const previousPrice = dailyPrices[0]?.open || 0;
   const change = calculateChange(currentPrice, previousPrice);
 
