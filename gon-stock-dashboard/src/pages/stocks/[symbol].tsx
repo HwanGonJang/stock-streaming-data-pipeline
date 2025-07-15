@@ -202,11 +202,11 @@ const StockDetail: NextPage = () => {
                               </Badge>
                               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                                 Recommendation Scale:<br/>
-                                Strong Buy (0.8000 – 1.0000): Indicates a strong expectation of upward movement.<br/>
-                                Buy (0.6000 – 0.7999): Suggests favorable conditions for buying.<br/>
-                                Hold (0.4000 – 0.5999): Advises holding the stock with no strong bias.<br/>
-                                Sell (0.2000 – 0.3999): Recommends selling due to weaker outlook.<br/>
-                                Strong Sell (0.0000 – 0.1999): Strongly advises selling to avoid potential losses.
+                                Strong Buy (8.000 – 10.000): Indicates a strong expectation of upward movement.<br/>
+                                Buy (6.500 – 7.999): Suggests favorable conditions for buying.<br/>
+                                Hold (4.500 – 6.499): Advises holding the stock with no strong bias.<br/>
+                                Sell (3.000 – 4.499): Recommends selling due to weaker outlook.<br/>
+                                Strong Sell (0.0000 – 2.999): Strongly advises selling to avoid potential losses.
                               </div>
                             </div>
                             <span className={cn('text-sm font-medium', getRecommendationColor(stockRecommendation.recommendationScore))}>
@@ -291,7 +291,7 @@ const StockDetail: NextPage = () => {
 
                   <Card>
                     <CardHeader>
-                      <CardTitle>Investment Recommendation</CardTitle>
+                      <CardTitle>Investment Recommendation by LLM</CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
                       {stockRecommendation ? (
@@ -309,11 +309,11 @@ const StockDetail: NextPage = () => {
                               </Badge>
                               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                                 Recommendation Scale:<br/>
-                                Strong Buy (0.8000 – 1.0000): Indicates a strong expectation of upward movement.<br/>
-                                Buy (0.6000 – 0.7999): Suggests favorable conditions for buying.<br/>
-                                Hold (0.4000 – 0.5999): Advises holding the stock with no strong bias.<br/>
-                                Sell (0.2000 – 0.3999): Recommends selling due to weaker outlook.<br/>
-                                Strong Sell (0.0000 – 0.1999): Strongly advises selling to avoid potential losses.
+                                Strong Buy (8.000 – 10.000): Indicates a strong expectation of upward movement.<br/>
+                                Buy (6.500 – 7.999): Suggests favorable conditions for buying.<br/>
+                                Hold (4.500 – 6.499): Advises holding the stock with no strong bias.<br/>
+                                Sell (3.000 – 4.499): Recommends selling due to weaker outlook.<br/>
+                                Strong Sell (0.0000 – 2.999): Strongly advises selling to avoid potential losses.
                               </div>
                             </div>
                             <span className={cn('text-2xl font-bold', getRecommendationColor(stockRecommendation.recommendationScore))}>

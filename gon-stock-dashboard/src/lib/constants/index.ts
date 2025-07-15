@@ -33,11 +33,11 @@ export const COMPANY_NAMES: Record<SupportedSymbol, string> = {
 };
 
 export const RECOMMENDATION_LABELS = {
-  'Strong Buy': { min: 0.8, max: 1.0, color: 'text-green-600 dark:text-green-400' },
-  'Buy': { min: 0.6, max: 0.7999, color: 'text-blue-600 dark:text-blue-400' },
-  'Hold': { min: 0.4, max: 0.5999, color: 'text-yellow-600 dark:text-yellow-400' },
-  'Sell': { min: 0.2, max: 0.3999, color: 'text-orange-600 dark:text-orange-400' },
-  'Strong Sell': { min: 0.0, max: 0.1999, color: 'text-red-600 dark:text-red-400' }
+  'Strong Buy': { min: 8.0, max: 10.0, color: 'text-green-600 dark:text-green-400' },
+  'Buy': { min: 6.5, max: 7.999, color: 'text-blue-600 dark:text-blue-400' },
+  'Hold': { min: 4.5, max: 6.499, color: 'text-yellow-600 dark:text-yellow-400' },
+  'Sell': { min: 3.0, max: 4.499, color: 'text-orange-600 dark:text-orange-400' },
+  'Strong Sell': { min: 0.0, max: 2.999, color: 'text-red-600 dark:text-red-400' }
 };
 
 export const SENTIMENT_LABELS = {

@@ -215,23 +215,23 @@ const About: NextPage = () => {
                   <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                     <li className="flex items-start space-x-3">
                       <span className="font-medium text-purple-600 dark:text-purple-400 mt-1">•</span>
-                      <span className="leading-relaxed"><strong>Strong Buy (0.8-1.0):</strong> Strong upward expectation, actively recommend buying</span>
+                      <span className="leading-relaxed"><strong>Strong Buy (8.0-10.0):</strong> Strong upward expectation, actively recommend buying</span>
                     </li>
                     <li className="flex items-start space-x-3">
                       <span className="font-medium text-purple-600 dark:text-purple-400 mt-1">•</span>
-                      <span className="leading-relaxed"><strong>Buy (0.6-0.8):</strong> Upward expectation, recommend buying</span>
+                      <span className="leading-relaxed"><strong>Buy (6.5-8.0):</strong> Upward expectation, recommend buying</span>
                     </li>
                     <li className="flex items-start space-x-3">
                       <span className="font-medium text-purple-600 dark:text-purple-400 mt-1">•</span>
-                      <span className="leading-relaxed"><strong>Hold (0.4-0.6):</strong> Recommend holding, neutral outlook</span>
+                      <span className="leading-relaxed"><strong>Hold (4.5-6.5):</strong> Recommend holding, neutral outlook</span>
                     </li>
                     <li className="flex items-start space-x-3">
                       <span className="font-medium text-purple-600 dark:text-purple-400 mt-1">•</span>
-                      <span className="leading-relaxed"><strong>Sell (0.2-0.4):</strong> Downward concern, consider selling</span>
+                      <span className="leading-relaxed"><strong>Sell (3.0-4.5):</strong> Downward concern, consider selling</span>
                     </li>
                     <li className="flex items-start space-x-3">
                       <span className="font-medium text-purple-600 dark:text-purple-400 mt-1">•</span>
-                      <span className="leading-relaxed"><strong>Strong Sell (0.0-0.2):</strong> Strong downward concern, actively recommend selling</span>
+                      <span className="leading-relaxed"><strong>Strong Sell (0.0-3.0):</strong> Strong downward concern, actively recommend selling</span>
                     </li>
                   </ul>
                 </div>
