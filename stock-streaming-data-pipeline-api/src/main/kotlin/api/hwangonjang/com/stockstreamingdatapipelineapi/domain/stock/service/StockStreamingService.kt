@@ -5,7 +5,6 @@ import api.hwangonjang.com.stockstreamingdatapipelineapi.domain.stock.repository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import java.time.*
-import java.time.format.DateTimeFormatter
 
 @Service
 class StockStreamingService(
@@ -14,15 +13,10 @@ class StockStreamingService(
     fun streamRealTimeTradeData(
         symbol: String,
         intervalSeconds: Long = 1L,
-        useKoreanTimeSimulation: Boolean = false,
-        debugFixedDate: LocalDate? = LocalDate.of(2025, 6, 20)  // 디버깅용 고정 날짜 파라미터
+        useKoreanTimeSimulation: Boolean = false
     ): Flux<TradeDto> {
         return if (useKoreanTimeSimulation) {
-            if (debugFixedDate != null) {
-                streamKoreanTimeSimulatedDataWithFixedDate(symbol, intervalSeconds, debugFixedDate)
-            } else {
-                streamKoreanTimeSimulatedData(symbol, intervalSeconds)
-            }
+            streamKoreanTimeSimulatedData(symbol, intervalSeconds)
         } else {
             streamRealTimeData(symbol, intervalSeconds)
         }
@@ -36,8 +30,18 @@ class StockStreamingService(
                     .map { trade -> TradeDto.from(trade) }
                     .collectList()
                     .flatMapMany { trades ->
-                        if (trades.isNotEmpty()) Flux.fromIterable(trades)
-                        else Flux.empty()
+                        if (trades.isNotEmpty()) {
+                            Flux.fromIterable(trades)
+                        } else {
+                            // 데이터가 없으면 오늘 날짜의 가장 최근 데이터 1개 반환
+                            val today = LocalDate.now()
+                            val startOfDay = today.atStartOfDay()
+                            val endOfDay = today.atTime(23, 59, 59)
+                            
+                            tradeRepository.findLatestTradeBySymbolAndDate(symbol, startOfDay, endOfDay)
+                                .map { trade -> TradeDto.from(trade) }
+                                .switchIfEmpty(Flux.empty())
+                        }
                     }
             }
     }
@@ -59,42 +63,23 @@ class StockStreamingService(
                     }
                     .collectList()
                     .flatMapMany { trades ->
-                        if (trades.isNotEmpty()) Flux.fromIterable(trades)
-                        else Flux.empty()
-                    }
-            }
-    }
-
-    private fun streamKoreanTimeSimulatedDataWithFixedDate(
-        symbol: String,
-        intervalSeconds: Long,
-        fixedDate: LocalDate
-    ): Flux<TradeDto> {
-        return Flux.interval(Duration.ofSeconds(intervalSeconds))
-            .filter { isKoreanMarketSimulationTime() }
-            .flatMap {
-                val now = LocalDateTime.now() // UTC 기준 현재 시간
-                val simulatedUsTime = convertKoreanTimeToFixedUsMarketTime(now, fixedDate)
-                val fromTime = simulatedUsTime.minusSeconds(intervalSeconds)
-                val toTime = simulatedUsTime
-
-                // 디버깅 로그
-                logTimeConversionDebug(now, simulatedUsTime, fixedDate)
-
-                tradeRepository.findBySymbolAndTradeTimestampBetween(symbol, fromTime, toTime)
-                    .map { trade ->
-                        TradeDto.from(trade).copy(
-                            tradeTimestamp = convertToKoreanSimulationTime(trade.primaryKey.tradeTimestamp)
-                        )
-                    }
-                    .collectList()
-                    .flatMapMany { trades ->
                         if (trades.isNotEmpty()) {
                             println("🔍 [DEBUG] 조회된 데이터: ${trades.size}건, 시간범위: $fromTime ~ $toTime")
                             Flux.fromIterable(trades)
                         } else {
                             println("⚠️ [DEBUG] 데이터 없음, 시간범위: $fromTime ~ $toTime")
-                            Flux.empty()
+                            // 데이터가 없으면 해당 날짜의 가장 최근 데이터 1개 반환
+                            val targetDate = simulatedUsTime.toLocalDate()
+                            val startOfDay = targetDate.atStartOfDay()
+                            val endOfDay = targetDate.atTime(23, 59, 59)
+
+                            tradeRepository.findLatestTradeBySymbolAndDate(symbol, startOfDay, endOfDay)
+                                .map { trade ->
+                                    TradeDto.from(trade).copy(
+                                        tradeTimestamp = convertToKoreanSimulationTime(trade.primaryKey.tradeTimestamp)
+                                    )
+                                }
+                                .switchIfEmpty(Flux.empty())
                         }
                     }
             }
@@ -206,68 +191,6 @@ class StockStreamingService(
         }
 
         return targetDate
-    }
-
-    /**
-     * 고정 날짜 기준으로 한국 시간을 미국 UTC 시간으로 변환 (디버깅용)
-     */
-    private fun convertKoreanTimeToFixedUsMarketTime(
-        currentUtcTime: LocalDateTime,
-        fixedDate: LocalDate
-    ): LocalDateTime {
-        // 1단계: UTC를 한국 시간으로 변환
-        val koreanTime = currentUtcTime.plusHours(9)
-        val koreanCurrentTime = koreanTime.toLocalTime()
-
-        // 2단계: 한국 시간을 미국 시간으로 1:1 매핑
-        val koreanStartTime = LocalTime.of(4, 0)
-        val koreanEndTime = LocalTime.of(20, 0)
-        val usStartTime = LocalTime.of(4, 0)
-        val usEndTime = LocalTime.of(20, 0)
-
-        val mappedUsTime = when {
-            koreanCurrentTime.isBefore(koreanStartTime) -> usEndTime
-            koreanCurrentTime.isAfter(koreanEndTime) -> usStartTime
-            else -> koreanCurrentTime
-        }
-
-        // 3단계: 고정 날짜의 미국 시간을 UTC로 변환
-        val usLocalDateTime = LocalDateTime.of(fixedDate, mappedUsTime)
-        val usUtcTime = convertUsTimeToUtc(usLocalDateTime, fixedDate)
-
-        return usUtcTime
-    }
-
-    /**
-     * 디버깅용 시간 변환 정보 출력
-     */
-    private fun logTimeConversionDebug(
-        currentUtcTime: LocalDateTime,
-        usUtcTime: LocalDateTime,
-        fixedDate: LocalDate
-    ) {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val koreanTime = currentUtcTime.plusHours(9)
-        val usLocalTime = convertUtcToUsTime(usUtcTime)
-
-        println("🕐 [DEBUG] 고정날짜: $fixedDate")
-        println("🌍 [DEBUG] 현재 UTC: ${currentUtcTime.format(formatter)}")
-        println("🇰🇷 [DEBUG] 한국시간: ${koreanTime.format(formatter)}")
-        println("🇺🇸 [DEBUG] 미국로컬: ${usLocalTime.format(formatter)}")
-        println("🌍 [DEBUG] 미국UTC: ${usUtcTime.format(formatter)}")
-        println("📊 [DEBUG] 조회범위: ${usUtcTime.minusSeconds(1).format(formatter)} ~ ${usUtcTime.format(formatter)} (UTC)")
-        println("----------------------------------------")
-    }
-
-    /**
-     * 디버깅용 시간 변환 정보 출력
-     */
-    private fun logTimeConversion(currentUtcTime: LocalDateTime, usUtcTime: LocalDateTime) {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val koreanTime = currentUtcTime.plusHours(9)
-        val usLocalTime = convertUtcToUsTime(usUtcTime)
-
-        println("🌍 UTC: ${currentUtcTime.format(formatter)} -> 🇰🇷 한국: ${koreanTime.format(formatter)} -> 🇺🇸 미국UTC: ${usUtcTime.format(formatter)}")
     }
 
     fun getLatestTrades(symbol: String, limit: Int = 10): Flux<TradeDto> {

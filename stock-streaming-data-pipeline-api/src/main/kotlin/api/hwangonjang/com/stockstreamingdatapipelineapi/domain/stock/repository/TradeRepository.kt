@@ -28,4 +28,11 @@ interface TradeRepository : ReactiveCassandraRepository<Trade, TradePrimaryKey> 
         @Param("symbol") symbol: String,
         @Param("limit") limit: Int
     ): Flux<Trade>
+    
+    @Query("SELECT * FROM trades WHERE symbol = :symbol AND trade_timestamp >= :startOfDay AND trade_timestamp <= :endOfDay ORDER BY trade_timestamp DESC LIMIT 1")
+    fun findLatestTradeBySymbolAndDate(
+        @Param("symbol") symbol: String,
+        @Param("startOfDay") startOfDay: LocalDateTime,
+        @Param("endOfDay") endOfDay: LocalDateTime
+    ): Flux<Trade>
 }
