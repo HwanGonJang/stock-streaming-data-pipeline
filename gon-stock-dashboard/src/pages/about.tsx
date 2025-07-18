@@ -45,7 +45,7 @@ const About: NextPage = () => {
                 <span>Platform Overview</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent className="pt-2">
               <div className="prose dark:prose-invert max-w-none">
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
                   Gon Stock Dashboard is a comprehensive investment analysis platform that provides real-time stock market data. 
@@ -120,7 +120,7 @@ const About: NextPage = () => {
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Auto Refresh</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                      Automatic data updates every 30 seconds
+                      Automatic data updates every 10 seconds
                     </p>
                   </div>
                 </div>
@@ -207,6 +207,10 @@ const About: NextPage = () => {
                       <span className="font-medium text-green-600 dark:text-green-400 mt-1">•</span>
                       <span className="leading-relaxed">Click the star icon to add/remove from favorites</span>
                     </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="font-medium text-green-600 dark:text-green-400 mt-1">•</span>
+                      <span className="leading-relaxed">Monitor real-time data during U.S. market hours, even in Korean local time.</span>
+                    </li>
                   </ul>
                 </div>
 
@@ -249,7 +253,7 @@ const About: NextPage = () => {
                     </li>
                     <li className="flex items-start space-x-3">
                       <span className="font-medium text-orange-600 dark:text-orange-400 mt-1">•</span>
-                      <span className="leading-relaxed">Data is automatically updated every 30 seconds</span>
+                      <span className="leading-relaxed">Data is automatically updated every 10 seconds</span>
                     </li>
                   </ul>
                 </div>
@@ -281,7 +285,7 @@ const About: NextPage = () => {
                     </li>
                     <li className="flex items-start space-x-2">
                       <span className="text-blue-500 mt-1">•</span>
-                      <span><strong>Update Frequency:</strong> 30 seconds</span>
+                      <span><strong>Update Frequency:</strong> 10 seconds</span>
                     </li>
                   </ul>
                 </div>

@@ -9,7 +9,7 @@ import TopGainersLosers from '@/components/dashboard/TopGainersLosers';
 import StockRecommendations from '@/components/dashboard/StockRecommendations';
 import TopSellRecommendations from '@/components/dashboard/TopSellRecommendations';
 import StockTable from '@/components/dashboard/StockTable';
-import { Card, CardHeader, CardTitle, CardContent, Button, Select, Switch } from '@/components/ui';
+import { Card, CardHeader, CardTitle, CardContent, Button, Select, Switch, Input } from '@/components/ui';
 
 const Dashboard: NextPage = () => {
   const [showFilters, setShowFilters] = useState(false);
@@ -38,16 +38,16 @@ const Dashboard: NextPage = () => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  // Auto-refresh functionality with fixed 30 second interval
+  // Auto-refresh functionality with user-configurable interval
   useEffect(() => {
     if (!autoRefresh) return;
 
     const interval = setInterval(() => {
       fetchDashboardData();
-    }, 30000); // Fixed 30 seconds
+    }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [autoRefresh, fetchDashboardData]);
+  }, [autoRefresh, refreshInterval, fetchDashboardData]);
 
   // Handle manual refresh
   const handleRefresh = async () => {
@@ -129,10 +129,19 @@ const Dashboard: NextPage = () => {
                     
                     <div className="flex flex-col space-y-2">
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Refresh Interval
+                        Refresh Interval (seconds)
                       </label>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Fixed at 30 seconds
+                      <Input
+                        type="number"
+                        min="1"
+                        max="300"
+                        value={refreshInterval / 1000}
+                        onChange={(e) => setRefreshInterval(Math.max(1, Math.min(300, parseInt(e.target.value) || 10)) * 1000)}
+                        className="w-24"
+                        placeholder="10"
+                      />
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        1-300 seconds
                       </div>
                     </div>
                     

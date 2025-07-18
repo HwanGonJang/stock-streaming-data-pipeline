@@ -65,7 +65,7 @@ export const useUIStore = create<UIState>()(
         sidebarOpen: false,
         compactMode: false,
         autoRefresh: true,
-        refreshInterval: 30000,
+        refreshInterval: 10000,
         showChangePercent: true,
         showVolume: true,
         chartType: 'line',

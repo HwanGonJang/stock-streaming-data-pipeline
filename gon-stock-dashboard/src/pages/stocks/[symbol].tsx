@@ -145,19 +145,72 @@ const StockDetail: NextPage = () => {
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                       Last updated: {realTimePrices[stockSymbol]?.tradeTimestamp ? 
                         (() => {
-                          const utcDate = new Date(realTimePrices[stockSymbol].tradeTimestamp);
-                          const edtDate = new Date(utcDate.getTime() - (4 * 60 * 60 * 1000)); // UTC-4 for EDT
-                          return edtDate.toLocaleString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            hour12: true
-                          }) + ' EDT';
+                          const timestamp = realTimePrices[stockSymbol].tradeTimestamp;
+                          
+                          // 문자열에서 직접 파싱
+                          const match = timestamp.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+                          if (!match) return `Invalid timestamp: ${timestamp}`;
+                          
+                          const [, year, month, day, hour, minute, second] = match.map(Number);
+                          
+                          let finalDay = day;
+                          let finalMonth = month;
+                          let finalYear = year;
+                          let finalHour = hour;
+                          
+                          if (useKoreanTimeSimulation) {
+                            // 한국 시간 시뮬레이션: 브라우저가 KST로 변환했으므로 하루 빼기
+                            finalDay = day - 1;
+                            
+                            // 일이 0이 되면 이전 달로 조정
+                            if (finalDay <= 0) {
+                              finalMonth = month - 1;
+                              if (finalMonth <= 0) {
+                                finalMonth = 12;
+                                finalYear = year - 1;
+                              }
+                              const daysInMonth = new Date(finalYear, finalMonth, 0).getDate();
+                              finalDay = daysInMonth;
+                            }
+                          } else {
+                            // 일반 모드: UTC 시간 그대로 사용하되 EDT로 변환 (UTC-4)
+                            finalHour = hour - 4;
+                            
+                            // 시간이 음수가 되면 하루 전으로 조정
+                            if (finalHour < 0) {
+                              finalHour = 24 + finalHour;
+                              finalDay = day - 1;
+                              
+                              // 일이 0이 되면 이전 달로 조정
+                              if (finalDay <= 0) {
+                                finalMonth = month - 1;
+                                if (finalMonth <= 0) {
+                                  finalMonth = 12;
+                                  finalYear = year - 1;
+                                }
+                                const daysInMonth = new Date(finalYear, finalMonth, 0).getDate();
+                                finalDay = daysInMonth;
+                              }
+                            }
+                          }
+                          
+                          // 포맷팅
+                          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                          const monthName = months[finalMonth - 1];
+                          const ampm = finalHour >= 12 ? 'PM' : 'AM';
+                          const displayHour = finalHour % 12 || 12;
+                          const displayMinute = minute.toString().padStart(2, '0');
+                          const displaySecond = second.toString().padStart(2, '0');
+                          
+                          return `${monthName} ${finalDay}, ${finalYear}, ${displayHour.toString().padStart(2, '0')}:${displayMinute}:${displaySecond} ${ampm} EDT`;
                         })() : 
-                        'Loading...'}
+                        realTimeConnection.error ? 
+                          `No data available for ${new Date().toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}` : 
+                          'Loading...'}
                     </p>
                   </div>
                   
@@ -325,17 +378,39 @@ const StockDetail: NextPage = () => {
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             Last updated: {(() => {
-                              const utcDate = new Date(stockRecommendation.lastUpdatedAt);
-                              const edtDate = new Date(utcDate.getTime() - (4 * 60 * 60 * 1000)); // UTC-4 for EDT
-                              return edtDate.toLocaleString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit',
-                                hour12: true
-                              }) + ' EDT';
+                              const timestamp = stockRecommendation.lastUpdatedAt;
+                              
+                              // 문자열에서 직접 파싱
+                              const match = timestamp.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
+                              if (!match) return 'Invalid timestamp';
+                              
+                              const [, year, month, day, hour, minute, second] = match.map(Number);
+                              
+                              // 하루 빼기
+                              let finalDay = day - 1;
+                              let finalMonth = month;
+                              let finalYear = year;
+                              
+                              // 일이 0이 되면 이전 달로 조정
+                              if (finalDay <= 0) {
+                                finalMonth = month - 1;
+                                if (finalMonth <= 0) {
+                                  finalMonth = 12;
+                                  finalYear = year - 1;
+                                }
+                                const daysInMonth = new Date(finalYear, finalMonth, 0).getDate();
+                                finalDay = daysInMonth;
+                              }
+                              
+                              // 포맷팅 (시간은 그대로 사용)
+                              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                              const monthName = months[finalMonth - 1];
+                              const ampm = hour >= 12 ? 'PM' : 'AM';
+                              const displayHour = hour % 12 || 12;
+                              const displayMinute = minute.toString().padStart(2, '0');
+                              const displaySecond = second.toString().padStart(2, '0');
+                              
+                              return `${monthName} ${finalDay}, ${finalYear}, ${displayHour.toString().padStart(2, '0')}:${displayMinute}:${displaySecond} ${ampm} EDT`;
                             })()}
                           </div>
                         </div>

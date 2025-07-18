@@ -1,11 +1,21 @@
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Clock } from 'lucide-react';
 import { useTheme } from '@/lib/theme-provider';
 import { useUIStore } from '@/store/ui';
 import { Button } from '@/components/ui';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useUIStore();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const toggleTheme = () => {
     if (theme === 'dark') {
@@ -22,6 +32,20 @@ export default function Header() {
     if (theme === 'light') return <Sun className="h-4 w-4" />;
     return <Sun className="h-4 w-4" />;
   };
+
+  const getMarketStatus = () => {
+    const utcHour = currentTime.getUTCHours();
+    
+    // US Market: UTC 08:00-24:00 (considering market hours and extended hours)
+    const usMarketOpen = utcHour >= 8 && utcHour < 24;
+    
+    // Korean Market: UTC 19:00-11:00 (overnight UTC)
+    const koreanMarketOpen = utcHour >= 19 || utcHour < 11;
+    
+    return { usMarketOpen, koreanMarketOpen };
+  };
+
+  const { usMarketOpen, koreanMarketOpen } = getMarketStatus();
 
   return (
     <header className="bg-white dark:bg-dark-900 border-b border-gray-200 dark:border-dark-700 fixed top-0 left-0 right-0 z-50 h-16">
@@ -53,7 +77,28 @@ export default function Header() {
         </div>
 
         {/* Right side - Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
+          {/* Market Status */}
+          <div className="hidden sm:flex items-center space-x-3">
+            <div className="flex items-center space-x-1">
+              <div className={`h-2 w-2 rounded-full ${usMarketOpen ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">US</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className={`h-2 w-2 rounded-full ${koreanMarketOpen ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">KR</span>
+            </div>
+            <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+              <Clock className="h-3 w-3" />
+              <span>{currentTime.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false,
+                timeZone: 'UTC'
+              })} UTC</span>
+            </div>
+          </div>
+          
           {/* Theme toggle */}
           <Button
             variant="ghost"
