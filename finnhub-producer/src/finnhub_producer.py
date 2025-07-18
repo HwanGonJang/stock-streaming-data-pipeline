@@ -2,7 +2,6 @@ import os
 import ast
 import json
 import time
-import threading
 import websocket
 from dotenv import load_dotenv
 from utils.functions import load_client, load_producer, ticker_validator, avro_encode, load_avro_schema
@@ -15,7 +14,6 @@ class FinnhubProducer:
         """Initializes the Finnhub producer, loads environment variables, and starts the WebSocket connection."""
         self._load_environment_variables()
         self._initialize_services()
-        self._initialize_throttling()
         self._start_websocket()
 
     def _load_environment_variables(self):
@@ -56,44 +54,6 @@ class FinnhubProducer:
         self.producer = load_producer(f'{self.kafka_server}:{self.kafka_port}')
         self.avro_schema = load_avro_schema('src/schemas/trades.avsc')
 
-    def _initialize_throttling(self):
-        """Initializes throttling mechanism to limit data processing to once per second."""
-        self.running = True
-        self.last_processed_time = 0
-        self.message_buffer = []
-        self.buffer_lock = threading.Lock()
-        self.processing_thread = threading.Thread(target=self._process_buffer, daemon=True)
-        self.processing_thread.start()
-
-    def _process_buffer(self):
-        """Background thread that processes messages from the buffer once per second."""
-        while self.running:
-            current_time = time.time()
-            # Wait until at least 1 second has passed since the last processing
-            if current_time - self.last_processed_time >= 1.0 and self.message_buffer:
-                with self.buffer_lock:
-                    # Get the latest message only (most recent data)
-                    latest_message = self.message_buffer[-1]
-                    self.message_buffer.clear()
-                
-                try:
-                    message_data = json.loads(latest_message)
-                    avro_message = avro_encode(
-                        {
-                            'data': message_data.get('data', []),
-                            'type': message_data.get('type', '')
-                        },
-                        self.avro_schema
-                    )
-                    self.producer.send(self.kafka_topic, avro_message)
-                    print(f"Processed message at {time.strftime('%H:%M:%S')}")
-                except Exception as e:
-                    print(f'Error processing message: {e}')
-                
-                self.last_processed_time = current_time
-            
-            # Sleep briefly to prevent CPU hogging
-            time.sleep(0.1)
 
     def _start_websocket(self):
         """Starts the WebSocket connection to Finnhub."""
@@ -108,14 +68,25 @@ class FinnhubProducer:
         self.ws.run_forever()
 
     def on_message(self, ws, message):
-        """Buffers incoming WebSocket messages for throttled processing.
+        """Processes incoming WebSocket messages and sends them directly to Kafka.
 
         Args:
             ws (WebSocketApp): The WebSocket instance.
             message (str): The received message in JSON format.
         """
-        with self.buffer_lock:
-            self.message_buffer.append(message)
+        try:
+            message_data = json.loads(message)
+            avro_message = avro_encode(
+                {
+                    'data': message_data.get('data', []),
+                    'type': message_data.get('type', '')
+                },
+                self.avro_schema
+            )
+            self.producer.send(self.kafka_topic, avro_message)
+            print(f"Processed message at {time.strftime('%H:%M:%S')}")
+        except Exception as e:
+            print(f'Error processing message: {e}')
 
     def on_error(self, ws, error):
         """Handles WebSocket errors.
@@ -133,7 +104,6 @@ class FinnhubProducer:
             ws (WebSocketApp): The WebSocket instance.
         """
         print('### WebSocket closed ###')
-        self.running = False
 
     def on_open(self, ws):
         """Subscribes to stock tickers when WebSocket connection opens.
@@ -146,10 +116,12 @@ class FinnhubProducer:
                 if ticker_validator(self.finnhub_client, ticker):
                     self.ws.send(json.dumps({'type': 'subscribe', 'symbol': ticker}))
                     print(f'Subscription for {ticker} succeeded')
+                    time.sleep(0.5)
                 else:
                     print(f'Subscription for {ticker} failed - ticker not found')
             else:
                 self.ws.send(json.dumps({'type': 'subscribe', 'symbol': ticker}))
+                time.sleep(0.5)
 
 
 if __name__ == '__main__':

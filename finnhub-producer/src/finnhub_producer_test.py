@@ -2,6 +2,7 @@ import os
 import ast
 import json
 import websocket
+import time
 from dotenv import load_dotenv
 from utils.functions import load_client, load_producer, ticker_validator, avro_encode, load_avro_schema
 
@@ -101,10 +102,12 @@ class FinnhubProducer:
                 if ticker_validator(self.finnhub_client, ticker):
                     self.ws.send(json.dumps({'type': 'subscribe', 'symbol': ticker}))
                     print(f'Subscription for {ticker} succeeded')
+                    time.sleep(0.5)
                 else:
                     print(f'Subscription for {ticker} failed - ticker not found')
             else:
                 self.ws.send(json.dumps({'type': 'subscribe', 'symbol': ticker}))
+                time.sleep(0.5)
 
 
 if __name__ == '__main__':
