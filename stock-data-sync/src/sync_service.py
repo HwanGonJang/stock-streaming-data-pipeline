@@ -41,7 +41,7 @@ class StockDataSyncService:
         
         return results
 
-    # Daily News: 1회 API 요청
+    # Daily News: 20회 API 요청
     def sync_daily_news(self) -> Dict[str, Any]:
         """Sync daily prices for all symbols"""
         results = {
@@ -60,15 +60,20 @@ class StockDataSyncService:
         target_utc = target_est.astimezone(pytz.utc)
         time_from = target_utc.strftime('%Y%m%dT%H%M')
 
-        news_list = self.alpha_vantage.get_news_sentiment(self.symbols, time_from=time_from, limits=200)
+        for symbol in self.symbols:
+            if symbol == 'GOOGL':
+                symbol = 'GOOG'
 
-        stats = self._save_news_to_database(news_list)
-        if stats['failed'] > 0:
-            results['error_count'] += 1
-            results['errors'].append(f"NEWS_SENTIMENT")
+            news_list = self.alpha_vantage.get_news_sentiment(symbol, limits=200)
 
-        if stats['saved'] > 0:
-            results['success_count'] += 1
+            stats = self._save_news_to_database(news_list)
+            if stats['failed'] > 0:
+                results['error_count'] += 1
+                logger.info(f"Failed to save news for {symbol}")
+
+            if stats['saved'] > 0:
+                results['success_count'] += 1
+                logger.info(f"Success to save news for {symbol}")
         
         logger.info(f"Daily quotes sync completed. Success: {results['success_count']}, Errors: {results['error_count']}")
         return results
@@ -133,29 +138,29 @@ class StockDataSyncService:
         if stats['saved'] > 0:
             results['success_count'] += 1
 
-        # # 2. Balance Sheets
-        # all_balance_sheets = {}
-        # for symbol in self.symbols:
-        #     data = self.alpha_vantage.get_balance_sheet(symbol)
-        #     all_balance_sheets[symbol] = data
-        # stats = self._save_balance_sheets_to_database(all_balance_sheets)
-        # if stats['failed'] > 0:
-        #     results['error_count'] += 1
-        #     results['errors'].append(f"BALANCE_SHEET")
-        # if stats['saved'] > 0:
-        #     results['success_count'] += 1
+        # 2. Balance Sheets
+        all_balance_sheets = {}
+        for symbol in self.symbols:
+            data = self.alpha_vantage.get_balance_sheet(symbol)
+            all_balance_sheets[symbol] = data
+        stats = self._save_balance_sheets_to_database(all_balance_sheets)
+        if stats['failed'] > 0:
+            results['error_count'] += 1
+            results['errors'].append(f"BALANCE_SHEET")
+        if stats['saved'] > 0:
+            results['success_count'] += 1
 
-        # # 3. Cash Flows
-        # all_cash_flows = {}
-        # for symbol in self.symbols:
-        #     data = self.alpha_vantage.get_cash_flow(symbol)
-        #     all_cash_flows[symbol] = data
-        # stats = self._save_cash_flows_to_database(all_cash_flows)
-        # if stats['failed'] > 0:
-        #     results['error_count'] += 1
-        #     results['errors'].append(f"CASH_FLOW")
-        # if stats['saved'] > 0:
-        #     results['success_count'] += 1
+        # 3. Cash Flows
+        all_cash_flows = {}
+        for symbol in self.symbols:
+            data = self.alpha_vantage.get_cash_flow(symbol)
+            all_cash_flows[symbol] = data
+        stats = self._save_cash_flows_to_database(all_cash_flows)
+        if stats['failed'] > 0:
+            results['error_count'] += 1
+            results['errors'].append(f"CASH_FLOW")
+        if stats['saved'] > 0:
+            results['success_count'] += 1
 
         logger.info(f"Quarterly sync completed. Success: {results['success_count']}, Errors: {results['error_count']}")
         return results
@@ -261,7 +266,7 @@ class StockDataSyncService:
                     if ts['ticker'] in self.symbols:
                         news_stocks.append({
                             'news_id': news_id,
-                            'symbol': ts['ticker'],
+                            'symbol': ts['ticker'] if ts['ticker'] != 'GOOG' else 'GOOGL',
                             'relevance_score': ts['relevance_score'],
                             'sentiment_score': ts['sentiment_score'],
                             'sentiment_label': ts['sentiment_label']

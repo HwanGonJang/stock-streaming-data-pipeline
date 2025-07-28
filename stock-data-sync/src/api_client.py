@@ -442,19 +442,20 @@ class AlphaVantageClient:
             "quarterlyReports": quarterly_reports
         }
 
-    def get_news_sentiment(self, symbols: list, time_from: str = None, limits: int = 200) -> list:
+    def get_news_sentiment(self, symbol: str, time_from: str = None, limits: int = 200) -> list:
         """주어진 symbols에 대해 뉴스 및 감성분석 데이터를 파싱하여 반환"""
         params = {
             'function': 'NEWS_SENTIMENT',
-            'tickers': ','.join([s.upper() for s in symbols]),
+            'tickers': symbol,
             'apikey': self.api_key,
             'limit': limits
         }
         if time_from:
             params['time_from'] = time_from
         data = self._make_request(params)
+        print(data)
         if not data or 'feed' not in data:
-            logger.error(f"Failed to fetch news sentiment for {symbols}")
+            logger.error(f"Failed to fetch news sentiment for {symbol}")
             return []
         
         def parse_time(ts):
