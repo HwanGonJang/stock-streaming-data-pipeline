@@ -19,7 +19,8 @@ enum class StockSymbol(val symbol: String, val companyName: String) {
     QCOM("QCOM", "Qualcomm Incorporated"),
     TXN("TXN", "Texas Instruments Incorporated"),
     AMAT("AMAT", "Applied Materials Inc."),
-    PLTR("PLTR", "Palantir Technologies Inc.");
+    PLTR("PLTR", "Palantir Technologies Inc."),
+    AVGO("AVGO", "Broadcom Inc.");
 
     companion object {
         fun fromSymbol(symbol: String): StockSymbol? {
