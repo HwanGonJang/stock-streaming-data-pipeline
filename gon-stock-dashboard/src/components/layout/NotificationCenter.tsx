@@ -58,7 +58,7 @@ export default function NotificationCenter() {
                   {notification.message}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                  {new Date(notification.timestamp).toLocaleTimeString()}
+                  {new Date(notification.timestamp).toLocaleTimeString('en-US')}
                 </p>
               </div>
               <Button

@@ -477,7 +477,7 @@ const StockDetail: NextPage = () => {
                               </p>
                               <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                                 <span>{news.newsArticle.source}</span>
-                                <span>{new Date(news.newsArticle.timePublished).toLocaleDateString()}</span>
+                                <span>{new Date(news.newsArticle.timePublished).toLocaleDateString('en-US')}</span>
                                 <Badge 
                                   variant={news.sentimentLabel === 'Positive' ? 'success' : 
                                           news.sentimentLabel === 'Negative' ? 'danger' : 'default'}

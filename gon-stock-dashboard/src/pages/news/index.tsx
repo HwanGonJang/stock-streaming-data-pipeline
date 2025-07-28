@@ -79,11 +79,11 @@ export default function NewsPage() {
   }, [news, allNews, selectedSymbol]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString('en-US');
   };
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { 
+    return new Date(dateString).toLocaleTimeString('en-US', { 
       hour: '2-digit', 
       minute: '2-digit' 
     });

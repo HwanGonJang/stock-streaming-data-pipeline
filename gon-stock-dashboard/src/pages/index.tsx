@@ -209,8 +209,8 @@ const Dashboard: NextPage = () => {
                           </p>
                           <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
                             <span>{item.newsArticle?.source || item.source}</span>
-                            <span>{item.newsArticle?.timePublished ? new Date(item.newsArticle.timePublished).toLocaleString() : 
-                                    item.datetime ? new Date(item.datetime * 1000).toLocaleString() : 'No date'}</span>
+                            <span>{item.newsArticle?.timePublished ? new Date(item.newsArticle.timePublished).toLocaleString('en-US') : 
+                                    item.datetime ? new Date(item.datetime * 1000).toLocaleString('en-US') : 'No date'}</span>
                           </div>
                         </div>
                         <a
