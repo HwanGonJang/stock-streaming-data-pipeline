@@ -112,14 +112,14 @@ export function calculateChange(current: number, previous: number): number {
 }
 
 export function isValidSymbol(symbol: string): boolean {
-  // const validSymbols = [
-  //   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'AVGO',
-  //   'CRM', 'ORCL', 'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 'CSCO',
-  //   'QCOM', 'TXN', 'AMAT', 'PLTR'
-  // ];
   const validSymbols = [
-    'AAPL', 'MSFT'
+    'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'AVGO',
+    'CRM', 'ORCL', 'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 'CSCO',
+    'QCOM', 'TXN', 'AMAT', 'PLTR'
   ];
+  // const validSymbols = [
+  //   'AAPL', 'MSFT'
+  // ];
 
   return validSymbols.includes(symbol.toUpperCase());
 }

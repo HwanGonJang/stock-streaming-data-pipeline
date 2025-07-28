@@ -283,14 +283,14 @@ export interface ErrorResponse {
 }
 
 // Supported Stock Symbols
-// export const SUPPORTED_SYMBOLS = [
-//   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'AVGO',
-//   'CRM', 'ORCL', 'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 'CSCO',
-//   'QCOM', 'TXN', 'AMAT', 'PLTR'
-// ] as const;
 export const SUPPORTED_SYMBOLS = [
-  'AAPL', 'MSFT'
+  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'AVGO',
+  'CRM', 'ORCL', 'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 'CSCO',
+  'QCOM', 'TXN', 'AMAT', 'PLTR'
 ] as const;
+// export const SUPPORTED_SYMBOLS = [
+//   'AAPL', 'MSFT'
+// ] as const;
 
 export type SupportedSymbol = typeof SUPPORTED_SYMBOLS[number];
 

@@ -16,7 +16,7 @@ export default function TopSellRecommendations() {
 
   // Get top 3 sell recommendations (lowest scores)
   const topSellRecommendations = recommendations
-    .filter(stock => stock.recommendationScore <= 0.4)
+    // .filter(stock => stock.recommendationScore <= 0.4)
     .sort((a, b) => a.recommendationScore - b.recommendationScore)
     .slice(0, 3);
 

@@ -19,7 +19,7 @@ export default function StockRecommendations() {
 
   // Get top 3 recommendations
   const topRecommendations = recommendations
-    .filter(stock => stock.recommendationScore >= 0.7)
+    // .filter(stock => stock.recommendationScore >= 0.7)
     .sort((a, b) => b.recommendationScore - a.recommendationScore)
     .slice(0, 3);
 

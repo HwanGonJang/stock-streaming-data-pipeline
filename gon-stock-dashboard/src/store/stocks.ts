@@ -81,14 +81,14 @@ export const useStockStore = create<StockState>()(
           set({ isLoading: true, error: null });
           
           try {
-            // const symbols: SupportedSymbol[] = [
-            //   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'AVGO',
-            //   'CRM', 'ORCL', 'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 'CSCO',
-            //   'QCOM', 'TXN', 'AMAT', 'PLTR'
-            // ];
             const symbols: SupportedSymbol[] = [
-              'AAPL', 'MSFT'
+              'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA', 'TSLA', 'AVGO',
+              'CRM', 'ORCL', 'NFLX', 'ADBE', 'AMD', 'INTC', 'PYPL', 'CSCO',
+              'QCOM', 'TXN', 'AMAT', 'PLTR'
             ];
+            // const symbols: SupportedSymbol[] = [
+            //   'AAPL', 'MSFT'
+            // ];
 
             const [dashboardData, allNews] = await Promise.all([
               stocksApi.getDashboardData(symbols),
