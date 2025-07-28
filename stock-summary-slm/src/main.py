@@ -257,7 +257,9 @@ async def test_model_performance(
 async def batch_generate_summaries(
     background_tasks: BackgroundTasks,
     model_name: str = "phi3:mini",
-    db_service: DatabaseService = Depends(get_db_service)
+    db_service: DatabaseService = Depends(get_db_service),
+    llm_service: LLMService = Depends(get_llm_service),
+    recommendation_engine: RecommendationEngine = Depends(get_recommendation_engine)
 ):
     """Generate summaries for multiple stocks in background"""
     
@@ -266,7 +268,7 @@ async def batch_generate_summaries(
     async def process_batch():
         for symbol in STOCK_SYMBOLS:
             try:
-                await generate_summary(symbol, background_tasks, model_name, db_service)
+                await generate_summary(symbol, background_tasks, model_name, db_service, llm_service, recommendation_engine)
                 logger.info(f"Generated summary for {symbol}")
             except Exception as e:
                 logger.error(f"Failed to generate summary for {symbol}: {str(e)}")
