@@ -1,32 +1,32 @@
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: stock-data-sync-daily-news
-  namespace: pipeline-namespace
-spec:
-  # Run daily at 9:00 AM ET (13:00 UTC) - befor market open
-  schedule: "0 13 * * 1-5"  # Weekdays only
-  timeZone: "UTC"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: stock-data-sync
-            image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stock-data-sync:latest
-            command: ["python", "src/main.py", "daily-news"]
-            env:
-            - name: SYNC_TYPE
-              value: "daily"
-            envFrom:
-            - configMapRef:
-                name: pipeline-config
-            - secretRef:
-                name: pipeline-secrets
-          restartPolicy: OnFailure
-      backoffLimit: 3
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 3
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: stock-data-sync-daily-news
+#   namespace: pipeline-namespace
+# spec:
+#   # Run daily at 9:00 AM ET (13:00 UTC) - befor market open
+#   schedule: "0 13 * * 1-5"  # Weekdays only
+#   timeZone: "UTC"
+#   jobTemplate:
+#     spec:
+#       template:
+#         spec:
+#           containers:
+#           - name: stock-data-sync
+#             image: public.ecr.aws/d7v9d9b4/stock-streaming-data-pipeline/stock-data-sync:latest
+#             command: ["python", "src/main.py", "daily-news"]
+#             env:
+#             - name: SYNC_TYPE
+#               value: "daily"
+#             envFrom:
+#             - configMapRef:
+#                 name: pipeline-config
+#             - secretRef:
+#                 name: pipeline-secrets
+#           restartPolicy: OnFailure
+#       backoffLimit: 3
+#   successfulJobsHistoryLimit: 3
+#   failedJobsHistoryLimit: 3
 ---
 apiVersion: batch/v1
 kind: CronJob
